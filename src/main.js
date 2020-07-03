@@ -27,7 +27,7 @@ const getHeaders = () => {
 }
 
 const link = new HttpLink({
-  uri: 'http://157.230.200.94:8080/v1/graphql',
+  uri: process.env.GRAPHQL_URI,
   fetch,
   headers: getHeaders()
 })
