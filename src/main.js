@@ -26,8 +26,10 @@ const getHeaders = () => {
   return headers
 }
 
+console.log(process.env.VUE_APP_GRAPHQL_URI, '?')
+
 const link = new HttpLink({
-  uri: process.env.GRAPHQL_URI,
+  uri: process.env.VUE_APP_GRAPHQL_URI,
   fetch,
   headers: getHeaders()
 })
