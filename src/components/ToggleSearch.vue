@@ -61,7 +61,6 @@ export default {
     flex-flow: row;
     align-items: stretch;
     overflow: hidden;
-    height: 32px;
 
     input {
       border: 1px solid $fill_color_disabled;
@@ -83,6 +82,7 @@ export default {
       width: 0px;
       transition: width 300ms $cubic;
       box-sizing: border-box;
+      overflow: hidden;
     }
 
     &.enabled {

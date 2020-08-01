@@ -1,16 +1,16 @@
 <template>
   <div class="home">
-    <div class="info">
+    <div class="info" v-if="!is_embedded">
       <h1>Find Native-Owned Businesses</h1>
       <p>Nori grape silver beet broccoli kombu beet greens fava bean potato  quandong celery. Bunya nuts black-eyed pea prairie turnip leek lentil  turnip greens parsnip. Sea lettuce lettuce water chestnut eggplant  winter purslane fennel azuki bean earthnut pea sierra leone bologi leek  soko chicory celtuce parsley jícama salsify.</p>
     </div>
-    <div class="search" ref="hidebar" :style="search_offset">
+    <div class="search" ref="hidebar" :style="search_offset" v-if="!$route.query.hide_search">
       <div class="query" ref="search">
         <transition>
           <SearchInput
             label="Help me find native-owned"
             placeholder="Restaurants..."
-            :update="(v) => set( 'search_query', v )"
+            :update="(v) => $set( this, 'search_query', v )"
             v-if="!all_businesses"
           />
         </transition>
@@ -18,26 +18,36 @@
           <ToggleSearch
             class="transition-fade-in-down"
             text="all types of business"
-            :onchange="(v) => set( 'all_businesses', v )"/>
+            :onchange="(v) => $set( this, 'all_businesses', v )"/>
           <transition>
             <ToggleSearch
               class="transition-fade-in-down"
               v-if="minimum_search_criteria"
               text="by location"
               search="true"
-              :onchange="(v) => set( 'search_location', v )"/>
+              :onchange="(v) => $set( this, 'search_location', v )"/>
           </transition>
           <transition>
-            <ToggleSearch
+            <v-select
               class="delay-100ms transition-fade-in-down"
               v-if="minimum_search_criteria"
-              text="by tribal affiliation"
-              search="true"
-              :onchange="(v) => set( 'search_affiliation', v )"/>
+              placeholder="Tribal affiliation (e.g. Osage)"
+              v-model="search_affiliations"
+              multiple
+              :options="territories"
+              label="name"
+            />
           </transition>
-          <div class="tags">
-            <button class="button-knockout" v-for="tag in tags" :key="tag.id">{{tag.name}}</button>
-          </div>
+          <transition>
+            <v-select
+              class="delay-100ms transition-fade-in-down"
+              placeholder="Tags (e.g. Food)"
+              v-model="search_tags"
+              multiple
+              :options="tags"
+              label="name"
+            />
+          </transition>
         </div>
       </div>
       <div class="final-query">
@@ -54,8 +64,16 @@
               in <span class="query-detail">{{search_location}}</span>
             </span>
           </transition>
-          <span v-if="minimum_search_criteria && search_affiliation">
-            affiliated with <span class="query-detail">{{search_affiliation}}</span>...
+          <!-- TODO(nsahler): i18n friendly -->
+          <span v-if="minimum_search_criteria && search_affiliations.length > 0">
+            affiliated with the
+              <span
+                v-for="(nation, i) in search_affiliations"
+                :key="i"
+              >
+                <span class="query-detail">{{nation.name}}</span>
+                <span v-if="i + 1 < search_affiliations.length">, </span>
+            </span> nation<span v-if="search_affiliations.length > 1">s</span>...
           </span>
         </div>
         <transition>
@@ -78,6 +96,7 @@
 </template>
 
 <script>
+import 'vue-select/dist/vue-select.css'
 import SearchInput from '@/components/SearchInput'
 import ToggleSearch from '@/components/ToggleSearch'
 import SearchResults from '@/components/SearchResults'
@@ -85,16 +104,17 @@ import Loader from '@/components/Loader'
 
 import {
   GET_BUSINESSES,
-  GET_ALL_BUSINESSES,
-  GET_TAGS
+  GET_TAGS,
+  GET_TERRITORIES
 } from '@/queries'
 
 export default {
   data () {
     return {
-      search_query: '',
+      search_query: this.$route.query.query || '',
       search_location: '',
-      search_affiliation: '',
+      search_affiliations: [],
+      search_tags: [],
       all_businesses: false,
       show_search: true,
       is_scrolled_down: false
@@ -106,7 +126,6 @@ export default {
         this.is_scrolled_down = e.intersectionRatio < 1
       }, { threshold: [1] }
     )
-
     observer.observe(this.$refs.hidebar)
   },
   components: {
@@ -116,7 +135,6 @@ export default {
     Loader
   },
   methods: {
-    set (k, v) { this[ k ] = v },
     toggle_search () {
       this.show_search = !this.show_search
     }
@@ -128,22 +146,26 @@ export default {
     search_offset () {
       let height = this.show_search ? -1 : -this.$refs.search.getBoundingClientRect().height - 1
       return `top: ${height}px`
+    },
+    is_embedded () {
+      return this.$route.query.embed
     }
   },
   apollo: {
     businesses: {
       query () {
-        return this.all_businesses ? GET_ALL_BUSINESSES : GET_BUSINESSES
+        return GET_BUSINESSES
       },
       variables () {
-        return this.all_businesses ? {} : { query: this.search_query }
+        const query = this.search_query
+        const affiliations = this.search_affiliations.length > 0 ? this.search_affiliations.map(a => a.id) : null
+        const allBusinesses = this.all_businesses
+        return { allBusinesses, query, affiliations }
       }
     },
-    tags: {
-      query: GET_TAGS,
-      variables () {
-        return { query: this.search_query }
-      }
+    tags: GET_TAGS,
+    territories: {
+      query: GET_TERRITORIES
     }
   }
 }
@@ -184,16 +206,34 @@ export default {
       margin-top: 0px;
     }
 
-    .envelope {
-      overflow: hidden;
+    .toggle-input, .v-select {
+      margin-bottom: 15px;
+    }
+
+    .v-select {
+      min-width: 250px;
+      max-width: 500px;
+      margin-right: 15px;
+
+      .vs__dropdown-toggle {
+        border-color: #151515;
+        border-radius: 0px;
+
+        .vs__selected {
+          border-radius: 0;
+          background: #FEFEFE;
+          // padding: 2px 5px;
+          color: #555;
+        }
+      }
     }
 
     .filters {
       display: flex;
       flex-flow: row wrap;
+      padding-bottom: 15px;
 
       .toggle-input {
-        margin-bottom: 15px;
         margin-right: 15px;
       }
     }

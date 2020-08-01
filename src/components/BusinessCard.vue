@@ -10,7 +10,7 @@
         <div class="eyebrow">
           <div class="location">
             <a :href="location_link" v-if="primary_location">
-              Location Name
+              {{primary_location.name}}
             </a>
           </div>
           <div class="affiliation">{{territory.name}}</div>
@@ -42,11 +42,11 @@ export default {
       return primary ? primary.territory : null
     },
     primary_location () {
-      const first = this.business.locations[0]
-      return first ? first.location.coordinates : null
+      return this.business.locations[0] || null
     },
     location_link () {
-      return `http://www.google.com/maps/place/${this.primary_location[1]},${this.primary_location[0]}`
+      let [lat, lon] = this.primary_location.location.coordinates
+      return `https://www.google.com/maps/place/${lat},${lon}`
     },
     tags () {
       return this.business.tags.map(i => i.tag)
@@ -70,6 +70,7 @@ export default {
       flex: 1;
       display: flex;
       flex-flow: row;
+      height: 250px;
 
       .image-placeholder {
         background: #DDD;
@@ -80,7 +81,7 @@ export default {
       img {
         width: 100%;
         max-width: 100%;
-        height: auto;
+        height: 100%;
         object-fit: cover;
         align-self: center;
       }
@@ -149,7 +150,6 @@ export default {
 
         display: flex;
         flex-flow: row wrap;
-        // justify-content: space-between;
 
         span {
           padding-right: 5px;
