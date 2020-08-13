@@ -1,6 +1,12 @@
-# native-owned-businesses
+# Native Owned Businesses
 
-## Project setup
+## Running Locally
+
+### Configuration
+
+In order to run the project locally, you will need a `.env` file at the root of your directory which has the [Hasura](https://hasura.io/) URI for interacting with the backend database. An example of what your `.env` file should look like is in `.env.sample`.
+
+### Project setup
 ```
 npm install
 ```
