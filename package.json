@@ -17,6 +17,8 @@
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "register-service-worker": "^1.6.2",
+    "tailwindcss": "^1.7.3",
+    "typeface-inter": "^3.15.0",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.3",
     "vue-router": "^3.0.6",

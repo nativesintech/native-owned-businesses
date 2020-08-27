@@ -1,16 +1,53 @@
-@import './variables.scss';
+@import "tailwindcss/base";
+
+html {
+  @apply font-body;
+}
+
+
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 .button-knockout {
-  border: 1px solid $fill_color;
-  padding: 5px 10px;
-  background: #FFF;
-  transition: color 300ms $cubic, background-color 300ms $cubic;
-  height: 100%;
-  font-size: $font_size;
+  @apply border px-4 h-full bg-white border-gray-900 transition-colors
+  duration-300;
 
   &.selected {
-    background: $fill_color;
-    border: 1px solid $fill_color;
+    @apply bg-gray-900;
     color: #FFF;
+  }
+}
+
+.fade-in-down-enter-active,
+.fade-in-down-leave-active {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.fade-in-down-enter,
+.fade-in-down-leave-to {
+  @apply opacity-0 -translate-y-3 transform;
+}
+
+.vs__dropdown-menu {
+  box-shadow: none !important;
+  @apply border-gray-600;
+}
+
+.v-select {
+  @apply mr-4;
+  box-shadow: none !important;
+  min-width: 250px;
+  max-width: 500px;
+
+  .vs__dropdown-toggle {
+    @apply border-gray-600;
+    border-radius: 0px;
+
+    .vs__selected {
+      border-radius: 0;
+      background: #FEFEFE;
+      // padding: 2px 5px;
+      color: #555;
+    }
   }
 }
