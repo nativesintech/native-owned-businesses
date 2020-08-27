@@ -38,10 +38,12 @@
             v-if="!all_businesses"
             class="pb-4 flex-1 w-1/3 flex flex-col flex-grow"
           >
-            <label class="text-base font-semibold m-0">
-              help me find:
-            </label>
+            <label
+              for="search-input"
+              class="text-base font-semibold m-0"
+            >help me find:</label>
             <input
+              id="search-input"
               class="border-0 border-b text-xl focus:border-gray-600
               transition-colors focus:outline-none"
               placeholder="Restaurants..."
