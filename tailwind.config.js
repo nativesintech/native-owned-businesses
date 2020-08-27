@@ -5,5 +5,10 @@ module.exports = {
     }
   },
   variants: {},
-  plugins: []
+  plugins: [],
+  purge: [
+    './public/**/*.html',
+    './src/**/*.html',
+    './src/**/*.vue',
+  ]
 }
