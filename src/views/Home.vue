@@ -53,12 +53,12 @@
         </transition>
         <div class="flex flex-row flex-wrap flex-shrink">
           <ToggleSearch
-            class="transition-fade-in-down"
+            class="mb-4 lg:mb-0"
             text="all types of business"
             :onchange="(v) => $set( this, 'all_businesses', v )"
           />
             <v-select
-              class="delay-100 transition-fade-in-down"
+              class="mb-4 lg:mb-0"
               placeholder="Tribal affiliation (e.g. Osage)"
               v-model="search_affiliations"
               multiple
@@ -66,7 +66,7 @@
               label="name"
             />
             <v-select
-              class="delay-100 transition-fade-in-down"
+              class="mb-4 lg:mb-0"
               placeholder="Tags (e.g. Food)"
               v-model="search_tags"
               multiple
@@ -75,60 +75,54 @@
             />
         </div>
       </div>
-      <transition>
+      <transition name="fadee-in-down">
         <button
           v-if="is_scrolled_down"
           @click="toggle_search"
-          class="border py-1 px-2 box-border text-md"
+          class="border py-1 px-2 box-border text-md w-48"
         >{{show_search ? 'hide' : 'show' }}</button>
       </transition>
     </div>
-    <div class="font-bold text-lg flex flex-row">
-      <div class="flex">
-        <transition
-          enter-active-class="transition duration-300 ease-in-out"
-          enter-class="opacity-0 -translate-y-3 transform"
-          leave-to-class="opacity-0 -translate-y-3 transform"
-        >
-          <span>
-            <span key="base" v-if="minimum_search_criteria">Showing&nbsp;</span>
-            <span key="all" v-if="all_businesses" class="text-gray-500">
-              all businesses&nbsp;
-            </span>
-            <span v-else-if="search_query">
-              results for&nbsp;
-              <span class="text-gray-500">
-                "{{search_query}}"
-              </span>
-            </span>
+    <div class="font-bold text-lg whitespace-normal inline-block">
+      <transition name="fade-in-down">
+        <span v-if="minimum_search_criteria">Showing&nbsp;</span>
+      </transition>
+      <transition name="fade-in-down">
+        <span key="all" v-if="all_businesses" class="text-gray-500">
+          all businesses&nbsp;
+        </span>
+        <span v-else-if="search_query">
+          results for&nbsp;
+          <span class="text-gray-500">
+            "{{search_query}}"
           </span>
-          <span v-if="minimum_search_criteria && search_location">
-            in <span class="text-gray-500">{{search_location}}</span>&nbsp;
-          </span>
+        </span>
+      </transition>
+      <span v-if="minimum_search_criteria && search_location">
+        in <span class="text-gray-500">{{search_location}}</span>&nbsp;
+      </span>
 
-          <!-- TODO(nsahler): i18n friendly -->
-          <span v-if="minimum_search_criteria && search_affiliations.length > 0">
-            &nbsp;affiliated with the&nbsp;
-            <span
-              v-for="(nation, i) in search_affiliations"
-              :key="i"
-            >
-              <span class="text-gray-500">{{nation.name}}</span>
-              <span v-if="i + 1 < search_affiliations.length - 1">
-                ,&nbsp;
-              </span>
-              <span v-if="i + 1 === search_affiliations.length - 1">
-                &nbsp;or&nbsp;
-              </span>
-            </span>
-            <span>&nbsp;nation</span>
-            <span v-if="search_affiliations.length > 1">s</span>...
+      <!-- TODO(nsahler): i18n friendly -->
+      <span v-if="minimum_search_criteria && search_affiliations.length > 0">
+        &nbsp;affiliated with the&nbsp;
+        <span
+          v-for="(nation, i) in search_affiliations"
+          :key="i"
+        >
+          <span class="text-gray-500">{{nation.name}}</span>
+          <span v-if="i + 1 < search_affiliations.length - 1">
+            ,&nbsp;
           </span>
-        </transition>
-      </div>
+          <span v-if="i + 1 === search_affiliations.length - 1">
+            &nbsp;or&nbsp;
+          </span>
+        </span>
+        <span>&nbsp;nation</span>
+        <span v-if="search_affiliations.length > 1">s</span>...
+      </span>
     </div>
     <SearchResults v-if="show_search_results" :businesses="businesses" />
-    <transition name="transition-fade-in-down">
+    <transition name="fade-in-down">
       <Loader v-if="minimum_search_criteria && !businesses"/>
     </transition>
   </div>

@@ -1,7 +1,9 @@
 <template>
-  <div class="flex flex-row border border-gray-600 mb-6 shadow rounded">
-    <div class="border-r border-gray-600 flex-shrink flex flex-row h-64 w-1/4
-      rounded-l overflow-hidden">
+  <div class="flex flex-col md:flex-row border border-gray-600 mb-6 shadow
+    rounded">
+    <div class="overflow-hidden rounded-t border-b border-gray-600 flex-shrink
+      flex flex-row h-64 md:w-1/4 md:border-0 md:rounded-none md:rounded-l
+      md:border-r">
       <!-- TODO(nsahler): Slider -->
       <img
         v-if="business.image_assets.length > 0"
@@ -14,7 +16,7 @@
         class="bg-gray-600 w-full h-64"
       ></div>
     </div>
-    <div class="flex flex-col flex-1 w-3/4 flex-grow p-6">
+    <div class="flex flex-col flex-1 w-full flex-grow p-6">
       <header>
         <div class="text-sm w-full flex flex-row justify-between mb-1
           text-gray-800">

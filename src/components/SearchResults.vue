@@ -2,9 +2,10 @@
   <div class="py-4 flex flex-col">
     <transition-group name="fade-in-down" tag="div" mode="out-in">
       <BusinessCard
-        v-for="(b) in businesses"
-        :business="b"
-        :key="b.id"
+        v-for="(business, index) in businesses"
+        :business="business"
+        :key="business.id"
+        :style="`transition-delay: ${index * 100}ms;`"
       />
     </transition-group>
   </div>
