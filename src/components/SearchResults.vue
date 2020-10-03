@@ -1,13 +1,12 @@
 <template>
-  <div class="search-results">
-    <transition-group tag="div">
+  <div class="py-4 flex flex-col">
+    <transition-group name="fade-in-down" tag="div" mode="out-in">
       <BusinessCard
-        v-for="(b) in businesses"
-        :business="b"
-        :key="b.id"
-        class="result"
+        v-for="(business, index) in businesses"
+        :business="business"
+        :key="business.id"
+        :style="`transition-delay: ${index * 100}ms;`"
       />
-      <!-- :style="`transition-delay: ${ index * 100 }ms`" -->
     </transition-group>
   </div>
 </template>
@@ -18,26 +17,3 @@ export default {
   components: { BusinessCard }
 }
 </script>
-<style lang="scss" scoped>
-  $cubic: cubic-bezier(.65,.05,.36,1);
-
-  .search-results {
-    padding: 15px 0;
-    display: flex;
-    flex-flow: column;
-
-    .result {
-      &.v-enter-active,
-      &.v-leave-active {
-        // transition: transform 500ms $cubic, opacity 500ms $cubic;
-        opacity: 1;
-      }
-
-      &.v-enter,
-      &.v-leave-to {
-        opacity: 0;
-        transform: translate3d(0px, 50px, 0);
-      }
-    }
-  }
-</style>

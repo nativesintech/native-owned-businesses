@@ -1,12 +1,20 @@
 <template>
-  <div class="toggle-input" :class="{ enabled }">
+  <div
+    :class="{ enabled }"
+    class="mr-4 flex flex-row items-stretch overflow-hidden h-8"
+  >
     <button
       class="button-knockout"
       :class="{ selected: enabled }"
       @click.prevent="toggle"
     >{{text}}</button>
-    <div class="envelope" v-if="search">
+    <div
+      v-if="search"
+      class="w-0 transition-all duration-300 ease-in-out box-border
+      overflow-hidden"
+    >
       <input
+        class="border border-l-0 py-1 px-2 w-full box-border bg-white"
         v-model="value"
         placeholder="Search"
         :disabled="!enabled"
@@ -18,7 +26,13 @@
 <script>
 export default {
   props: [ 'text', 'onchange', 'search' ],
-  data () { return { enabled: false, value: '', empty: false } },
+  data () {
+    return {
+      enabled: false,
+      value: '',
+      empty: false
+    }
+  },
   methods: {
     toggle () {
       this.enabled = !this.enabled
@@ -54,8 +68,6 @@ export default {
 }
 </script>
 <style lang="scss">
-  @import '@/styles/variables.scss';
-
   .toggle-input {
     display: flex;
     flex-flow: row;
@@ -63,24 +75,24 @@ export default {
     overflow: hidden;
 
     input {
-      border: 1px solid $fill_color_disabled;
+      border: 1px solid;
       border-left: none;
       padding: 5px 10px;
       width: 100%;
       height: 100%;
       box-sizing: border-box;
-      font-size: $font_size;
       background-color: #FFF;
 
       &:focus {
         outline: none;
-        border-color: $fill_color;
+        border-color: #151515;
       }
     }
 
     .envelope {
+      @apply ease-in-out;
       width: 0px;
-      transition: width 300ms $cubic;
+      transition: width 300ms;
       box-sizing: border-box;
       overflow: hidden;
     }
