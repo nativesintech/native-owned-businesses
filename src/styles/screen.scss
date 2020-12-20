@@ -16,7 +16,7 @@ html {
 
 .fade-in-down-enter-active,
 .fade-in-down-leave-active {
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity, transform;
   @apply ease-in-out;
 }
 
@@ -24,6 +24,18 @@ html {
 .fade-in-down-leave-to {
   @apply opacity-0 transform -translate-y-3;
 }
+
+.fade-in-left-enter-active,
+.fade-in-left-leave-active {
+  transition: opacity, transform;
+  @apply ease-in-out duration-500;
+}
+
+.fade-in-left-enter,
+.fade-in-left-leave-to {
+  @apply opacity-0 transform -translate-x-3;
+}
+
 
 .vs__dropdown-menu {
   box-shadow: none !important;

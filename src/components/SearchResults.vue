@@ -1,12 +1,16 @@
 <template>
   <div class="py-4 flex flex-col">
-    <transition-group name="fade-in-down" tag="div" mode="out-in">
-      <BusinessCard
+    <transition-group name="fade-in-left" tag="div" mode="out-in">
+      <router-link
+        :to="{ name: 'business', params: { id: business.id }}"
         v-for="(business, index) in businesses"
-        :business="business"
         :key="business.id"
-        :style="`transition-delay: ${index * 100}ms;`"
-      />
+        >
+        <BusinessCard
+          :business="business"
+          :style="`transition-delay: ${index * 100}ms;`"
+        />
+      </router-link>
     </transition-group>
   </div>
 </template>

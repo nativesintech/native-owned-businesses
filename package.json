@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "genql:generate": "dotenv -- cross-var genql --endpoint %VUE_APP_GRAPHQL_URI% --output ./generated -H \"x-hasura-role: public\""
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.5",
@@ -14,6 +15,8 @@
     "apollo-link-http": "^1.5.17",
     "axios": "latest",
     "core-js": "^3.1.2",
+    "gotql": "^2.0.3",
+    "gql-query-builder": "^3.5.4",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "register-service-worker": "^1.6.2",
@@ -41,5 +44,21 @@
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",
     "vue-template-compiler": "^2.6.10"
-  }
+  },
+  "description": "## Running Locally",
+  "main": ".eslintrc.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nativesintech/native-owned-businesses.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nativesintech/native-owned-businesses/issues"
+  },
+  "homepage": "https://github.com/nativesintech/native-owned-businesses#readme"
 }

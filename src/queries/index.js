@@ -1,6 +1,8 @@
 import gql from 'graphql-tag'
+import { parse as gqlParse } from 'graphql'
+import { parse } from 'gotql/dist/modules/parser'
 
-export const GET_BUSINESSES = gql`
+export const BUSINESS_FIELDS_GQL = gql`
 fragment businessFields on businesses {
   id
   name
@@ -26,47 +28,98 @@ fragment businessFields on businesses {
   tags {
     tag { id, name }
   }
-}
-
-query($allBusinesses: Boolean!, $query: String, $affiliations: [String!]) {
-  businesses(where: {
-    territories: { territory: { id: { 
-      _in: $affiliations
-    }}}
-  }) @include(if: $allBusinesses) {
-    ...businessFields
-  }
-
-  businesses: search_businesses(
-    args: {search: $query},
-    where: {
-      territories: { territory: { id: { 
-        _in: $affiliations
-      }}}
-    }
-  ) @skip(if: $allBusinesses) {
-    ...businessFields
-  }
-}
-`
-
-export const GET_TAGS = gql`
-query {
-  tags {
-    name,
-    id
-  }
 }`
 
-export const GET_TERRITORIES = gql`
-query {
-  territories {
-    id
-    name
-    description_url
+const BUSINESS_FIELDS = [
+  'id', 'name', 'short_description', 'long_description',
+  {
+    locations: { fields: ['location', 'name'] }
+  }, {
+    territories: { fields: [{
+      territory: {
+        fields: ['id', 'name', 'description_url']
+      }
+    }] }
+  }, {
+    image_assets: {
+      fields: ['src', 'width', 'height', 'alt']
+    }
+  }, {
+    tags: {
+      fields: [{
+        tag: {
+          fields: ['id', 'name']
+        }
+      }]
+    }
   }
+]
+
+export const GET_BUSINESS_BY_ID = gqlParse(parse({
+  variables: {
+    id: { type: 'uuid', value: 'ignore' }
+  },
+  operation: {
+    name: 'businesses',
+    alias: 'business',
+    args: {
+      where: { id: { _eq: '$id' } }
+    },
+    fields: BUSINESS_FIELDS
+  }
+}, 'query'))
+
+export const getBusinessQuery = (query, affiliations, tags) => {
+  const filters = {}
+  const args = {}
+  const textSearch = query && query.trim().length > 0
+
+  if (affiliations.length > 0) {
+    filters.territories = { territory: { id: {
+      _in: '$affiliations'
+    } } }
+  }
+
+  if (tags.length > 0) {
+    filters.tags = { tag_id: { _in: '$tags' } }
+  }
+
+  if (query) {
+    args.args = { search: '$query' }
+  }
+
+  args.where = filters
+
+  const parsed = parse({
+    variables: {
+      query: { type: 'String', value: '!' },
+      affiliations: { type: '[String!]', value: ' ' },
+      tags: { type: '[bigint!]', value: ' ' }
+    },
+    operation: {
+      name: textSearch ? 'search_businesses' : 'businesses',
+      alias: 'businesses',
+      args,
+      fields: BUSINESS_FIELDS
+    }
+  }, 'query')
+  console.log(parsed)
+  return gqlParse(parsed)
 }
-`
+
+export const GET_TAGS = gqlParse(parse({
+  operation: {
+    name: 'tags',
+    fields: ['name', 'id']
+  }
+}, 'query'))
+
+export const GET_TERRITORIES = gqlParse(parse({
+  operation: {
+    name: 'territories',
+    fields: ['id', 'name', 'description_url']
+  }
+}, 'query'))
 
 /* const GET_TERRITORIES = gql`
 query($name: String!) {

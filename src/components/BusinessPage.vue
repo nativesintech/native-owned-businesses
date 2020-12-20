@@ -1,1 +1,1 @@
-<!-- Full, expanded page for businesses --> 
+<!-- Full, expanded page for businesses -->

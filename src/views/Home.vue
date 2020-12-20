@@ -121,7 +121,9 @@
         <span v-if="search_affiliations.length > 1">s</span>...
       </span>
     </div>
-    <SearchResults v-if="show_search_results" :businesses="businesses" />
+    <keep-alive>
+      <SearchResults v-if="show_search_results" :businesses="businesses" />
+    </keep-alive>
     <transition name="fade-in-down">
       <Loader v-if="minimum_search_criteria && !businesses"/>
     </transition>
@@ -135,9 +137,9 @@ import SearchResults from '@/components/SearchResults'
 import Loader from '@/components/Loader'
 
 import {
-  GET_BUSINESSES,
   GET_TAGS,
-  GET_TERRITORIES
+  GET_TERRITORIES,
+  getBusinessQuery
 } from '@/queries'
 
 export default {
@@ -172,7 +174,7 @@ export default {
   },
   computed: {
     minimum_search_criteria () {
-      return (this.all_businesses || this.search_query)
+      return this.search_query || this.search_affiliations || this.search_tags
     },
     search_offset () {
       let height = this.show_search ? -1 : -this.$refs.search.getBoundingClientRect().height - 1
@@ -188,13 +190,14 @@ export default {
   apollo: {
     businesses: {
       query () {
-        return GET_BUSINESSES
+        return getBusinessQuery(this.search_query, this.search_affiliations, this.search_tags)
       },
       variables () {
         const query = this.search_query
         const affiliations = this.search_affiliations.length > 0 ? this.search_affiliations.map(a => a.id) : null
-        const allBusinesses = this.all_businesses
-        return { allBusinesses, query, affiliations }
+        const tags = this.search_tags.length > 0 ? this.search_tags.map(t => t.id) : null
+
+        return { query, affiliations, tags }
       }
     },
     tags: GET_TAGS,

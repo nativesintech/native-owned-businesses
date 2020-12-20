@@ -2,7 +2,7 @@
   <div class="flex flex-col md:flex-row border border-gray-600 mb-6 shadow
     rounded">
     <div class="overflow-hidden rounded-t border-b border-gray-600 flex-shrink
-      flex flex-row h-64 md:w-1/4 md:border-0 md:rounded-none md:rounded-l
+      flex flex-row h-64 md:w-1/4 md:border-0 md:rounded-none
       md:border-r">
       <!-- TODO(nsahler): Slider -->
       <img
