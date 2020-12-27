@@ -1,33 +1,12 @@
 <template>
   <div class="flex flex-col text-left">
     <div
-      class="flex py-6 bg-white items-center"
-      v-if="!is_embedded"
-    >
-      <img
-        src="@/assets/logo.svg" alt="Logo"
-        class="flex-shrink-0 h-12 w-12"
-      >
-      <h1 class="text-xl sm:text-xl lg:text-4xl text-gray-900 font-bold ml-3">
-        Native Owned Businesses
-      </h1>
-    </div>
-    <div>
-      <p class="text-base text-gray-600 leading-normal mb-6">
-        Nori grape silver beet broccoli kombu beet greens fava bean potato
-        quandong celery. Bunya nuts black-eyed pea prairie turnip leek lentil
-        turnip greens parsnip. Sea lettuce lettuce water chestnut eggplant
-        winter purslane fennel azuki bean earthnut pea sierra leone bologi leek
-        soko chicory celtuce parsley jícama salsify.
-      </p>
-    </div>
-
-    <div
       ref="hidebar"
       :style="search_offset"
       v-if="!$route.query.hide_search"
       class="flex flex-col border-b-0 sticky bg-white p-6
-      transition-all duration-200 ease-in-out shadow mb-6 rounded">
+      transition-all duration-200 ease-in-out shadow mb-6 rounded
+      z-20">
 
       <div ref="search" class="flex flex-col">
         <transition
@@ -61,21 +40,21 @@
               class="mb-4 lg:mb-0"
               placeholder="Tribal affiliation (e.g. Osage)"
               v-model="search_affiliations"
-              multiple
-              :options="territories"
               label="name"
+              :options="territories"
+              multiple
             />
             <v-select
               class="mb-4 lg:mb-0"
               placeholder="Tags (e.g. Food)"
               v-model="search_tags"
-              multiple
-              :options="tags"
               label="name"
+              :options="tags"
+              multiple
             />
         </div>
       </div>
-      <transition name="fadee-in-down">
+      <transition name="fade-in-down">
         <button
           v-if="is_scrolled_down"
           @click="toggle_search"
@@ -83,21 +62,20 @@
         >{{show_search ? 'hide' : 'show' }}</button>
       </transition>
     </div>
-    <div class="font-bold text-lg whitespace-normal inline-block">
-      <transition name="fade-in-down">
-        <span v-if="minimum_search_criteria">Showing&nbsp;</span>
-      </transition>
-      <transition name="fade-in-down">
-        <span key="all" v-if="all_businesses" class="text-gray-500">
-          all businesses&nbsp;
-        </span>
-        <span v-else-if="search_query">
+    <div
+      class="font-bold text-lg whitespace-normal inline-block"
+      v-if="minimum_search_criteria"
+    >
+      <span>Showing&nbsp;</span>
+        <span v-if="search_query">
           results for&nbsp;
           <span class="text-gray-500">
             "{{search_query}}"
           </span>
         </span>
-      </transition>
+        <span key="all" v-else class="text-gray-500">
+          businesses&nbsp;
+        </span>
       <span v-if="minimum_search_criteria && search_location">
         in <span class="text-gray-500">{{search_location}}</span>&nbsp;
       </span>
@@ -121,11 +99,15 @@
         <span v-if="search_affiliations.length > 1">s</span>...
       </span>
     </div>
-    <keep-alive>
-      <SearchResults v-if="show_search_results" :businesses="businesses" />
-    </keep-alive>
-    <transition name="fade-in-down">
-      <Loader v-if="minimum_search_criteria && !businesses"/>
+
+    <SearchResults class="z-10" v-if="show_search_results"  :businesses="businesses"/>
+    <transition v-else-if="$apollo.queries.businesses.loading" name="fade-in-left" mode="out-in" appear>
+      <Loader/>
+    </transition>
+    <transition v-else-if="minimum_search_criteria && businesses" name="fade-in-left" mode="out-in" appear>
+      <div class="py-4 text-center text-lg text-gray-700">
+        <h2>No Results Found</h2>
+      </div>
     </transition>
   </div>
 </template>
@@ -174,17 +156,14 @@ export default {
   },
   computed: {
     minimum_search_criteria () {
-      return this.search_query || this.search_affiliations || this.search_tags
+      return this.search_query || (this.search_affiliations.length > 0) || (this.search_tags.length > 0)
     },
     search_offset () {
       let height = this.show_search ? -1 : -this.$refs.search.getBoundingClientRect().height - 1
       return `top: ${height}px`
     },
-    is_embedded () {
-      return this.$route.query.embed
-    },
     show_search_results () {
-      return this.minimum_search_criteria && this.businesses
+      return this.minimum_search_criteria && this.businesses && this.businesses.length
     }
   },
   apollo: {

@@ -14,12 +14,10 @@ export default {
 </script>
 <style lang="scss" scoped>
   .loading {
-    transition: opacity 400ms;
     display: flex;
     flex-flow: column;
     justify-content: center;
     align-items: center;
-    opacity: 1;
 
     svg {
       animation: rotate 1s infinite forwards;

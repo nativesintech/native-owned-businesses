@@ -1,39 +1,10 @@
-import gql from 'graphql-tag'
 import { parse as gqlParse } from 'graphql'
 import { parse } from 'gotql/dist/modules/parser'
-
-export const BUSINESS_FIELDS_GQL = gql`
-fragment businessFields on businesses {
-  id
-  name
-  short_description
-  long_description
-  locations {
-    location
-    name
-  }
-  territories {
-    territory {
-      id
-      name
-      description_url
-    }
-  }
-  image_assets {
-    src
-    width
-    height
-    alt
-  },
-  tags {
-    tag { id, name }
-  }
-}`
 
 const BUSINESS_FIELDS = [
   'id', 'name', 'short_description', 'long_description',
   {
-    locations: { fields: ['location', 'name'] }
+    locations: { fields: ['id', 'location', 'name', 'postal_address'] }
   }, {
     territories: { fields: [{
       territory: {

@@ -19,11 +19,13 @@
     "gql-query-builder": "^3.5.4",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
+    "mapbox-gl": "^2.0.0",
     "register-service-worker": "^1.6.2",
     "tailwindcss": "^1.7.3",
     "typeface-inter": "^3.15.0",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.3",
+    "vue-mapbox": "^0.4.1",
     "vue-router": "^3.0.6",
     "vue-select": "^3.10.5",
     "vuex": "^3.0.1"
