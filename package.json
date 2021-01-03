@@ -6,8 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint",
-    "genql:generate": "dotenv -- cross-var genql --endpoint %VUE_APP_GRAPHQL_URI% --output ./generated -H \"x-hasura-role: public\""
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.5",
@@ -16,7 +15,6 @@
     "axios": "latest",
     "core-js": "^3.1.2",
     "gotql": "^2.0.3",
-    "gql-query-builder": "^3.5.4",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "mapbox-gl": "^2.0.0",
