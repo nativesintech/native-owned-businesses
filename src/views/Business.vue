@@ -45,7 +45,7 @@
           class="h-full border-l border-gray-600 flex-grow flex-1 z-30"
           :accessToken="accessToken"
           :mapStyle.sync="mapStyle"
-          :center="business.locations[0].location.coordinates"
+          :center="(selectedLocation.coordinates || [0, 0])"
           :zoom="9"
           @load="onMapLoaded"
         >
@@ -53,7 +53,7 @@
             v-for="location in business.locations"
             :key="location.id"
             :coordinates="location.location.coordinates"
-            color="#edf2f7"
+            color="COLOR_LOCATION_MARKER"
           />
         </MglMap>
       </div>
@@ -65,6 +65,7 @@ import BusinessCard from '@/components/BusinessCard'
 import { GET_BUSINESS_BY_ID } from '@/queries'
 import Mapbox from 'mapbox-gl'
 import { MglMap, MglMarker } from 'vue-mapbox'
+import { COLOR_LOCATION_MARKER } from '@/constants.js'
 
 export default {
   props: ['id'],
@@ -73,7 +74,8 @@ export default {
     return {
       accessToken: 'pk.eyJ1Ijoibmlja3NhaGxlciIsImEiOiJja2l5MG9zd2UweWdmMnJwM3pmOTBkbnZlIn0.0PlHofmWvqKzjXi_GBHYZg',
       mapStyle: 'mapbox://styles/mapbox/streets-v11',
-      selectedLocation: null
+      selectedLocation: null,
+      COLOR_LOCATION_MARKER
     }
   },
   created () { this.mapbox = Mapbox },

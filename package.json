@@ -45,7 +45,7 @@
     "sass-loader": "^8.0.0",
     "vue-template-compiler": "^2.6.10"
   },
-  "description": "## Running Locally",
+  "description": "The frontend for a directory of native-owned businesses",
   "main": ".eslintrc.js",
   "directories": {
     "test": "tests"
@@ -54,7 +54,7 @@
     "type": "git",
     "url": "git+https://github.com/nativesintech/native-owned-businesses.git"
   },
-  "keywords": [],
+  "keywords": ["indigenous", "native"],
   "author": "",
   "license": "ISC",
   "bugs": {
