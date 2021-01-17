@@ -54,7 +54,10 @@
     "type": "git",
     "url": "git+https://github.com/nativesintech/native-owned-businesses.git"
   },
-  "keywords": ["indigenous", "native"],
+  "keywords": [
+    "indigenous",
+    "native"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
