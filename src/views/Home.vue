@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Header :is_embedded="is_embedded" />
     <main>
       <div
         ref="hidebar"
@@ -8,7 +7,6 @@
         v-if="!$route.query.hide_search"
         class="flex flex-col border-b-0 sticky bg-white p-6
         transition-all duration-200 ease-in-out shadow mb-6 rounded">
-
           <div ref="search" class="flex flex-col">
             <transition
               name="fade-in-down"
@@ -101,10 +99,15 @@
             <span v-if="search_affiliations.length > 1">s</span>...
           </span>
         </div>
-        <SearchResults v-if="show_search_results" :businesses="businesses" />
-        <transition name="fade-in-down">
-          <Loader v-if="minimum_search_criteria && !businesses"/>
-        </transition>
+        <SearchResults class="z-10" v-if="show_search_results"  :businesses="businesses"/>
+          <transition v-else-if="$apollo.queries.businesses.loading" name="fade-in-left" mode="out-in" appear>
+            <Loader/>
+          </transition>
+          <transition v-else-if="minimum_search_criteria && businesses" name="fade-in-left" mode="out-in" appear>
+            <div class="py-4 text-center text-lg text-gray-700">
+              <h2>No Results Found</h2>
+            </div>
+          </transition>
       </main>
     </div>
 </template>
@@ -114,12 +117,11 @@ import 'vue-select/dist/vue-select.css'
 import ToggleSearch from '@/components/ToggleSearch'
 import SearchResults from '@/components/SearchResults'
 import Loader from '@/components/Loader'
-import Header from '@/components/Header'
 
 import {
-  GET_BUSINESSES,
   GET_TAGS,
-  GET_TERRITORIES
+  GET_TERRITORIES,
+  getBusinessQuery
 } from '@/queries'
 
 export default {
@@ -145,8 +147,7 @@ export default {
   components: {
     ToggleSearch,
     SearchResults,
-    Loader,
-    Header
+    Loader
   },
   methods: {
     toggle_search () {
@@ -155,29 +156,27 @@ export default {
   },
   computed: {
     minimum_search_criteria () {
-      return (this.all_businesses || this.search_query)
+      return this.search_query || (this.search_affiliations.length > 0) || (this.search_tags.length > 0)
     },
     search_offset () {
       let height = this.show_search ? -1 : -this.$refs.search.getBoundingClientRect().height - 1
       return `top: ${height}px`
     },
-    is_embedded () {
-      return this.$route.query.embed
-    },
     show_search_results () {
-      return this.minimum_search_criteria && this.businesses
+      return this.minimum_search_criteria && this.businesses && this.businesses.length
     }
   },
   apollo: {
     businesses: {
       query () {
-        return GET_BUSINESSES
+        return getBusinessQuery(this.search_query, this.search_affiliations, this.search_tags)
       },
       variables () {
         const query = this.search_query
         const affiliations = this.search_affiliations.length > 0 ? this.search_affiliations.map(a => a.id) : null
-        const allBusinesses = this.all_businesses
-        return { allBusinesses, query, affiliations }
+        const tags = this.search_tags.length > 0 ? this.search_tags.map(t => t.id) : null
+
+        return { query, affiliations, tags }
       }
     },
     tags: GET_TAGS,

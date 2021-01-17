@@ -1,6 +1,5 @@
 <template>
   <div class="pb-8">
-    <Header :is_embedded="is_embedded" />
     <main class="space-y-4">
       <section class="space-y-2">
         <h1 class="text-2xl font-bold">About</h1>
@@ -29,15 +28,3 @@
     </main>
   </div>
 </template>
-<script>
-import Header from '@/components/Header'
-
-export default {
-  components: { Header },
-  data () {
-    return {
-      is_embedded: false
-    }
-  }
-}
-</script>

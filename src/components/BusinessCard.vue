@@ -1,9 +1,10 @@
 <template>
-  <div class="flex flex-col md:flex-row border border-gray-600 mb-6 shadow
-    rounded">
-    <div class="overflow-hidden rounded-t border-b border-gray-600 flex-shrink
-      flex flex-row h-64 md:w-1/4 md:border-0 md:rounded-none md:rounded-l
-      md:border-r">
+  <div class="flex flex-col overflow-hidden md:flex-row border border-gray-600 mb-6 shadow rounded">
+    <div
+      :class="expanded ? 'md:w-1/2 h-128' : 'md:w-1/4 h-64'"
+      class="overflow-hidden rounded-t border-b border-gray-600 flex-shrink
+      flex flex-row md:border-0 md:rounded-none md:border-r"
+    >
       <!-- TODO(nsahler): Slider -->
       <img
         v-if="business.image_assets.length > 0"
@@ -13,7 +14,7 @@
       >
       <div
         v-else
-        class="bg-gray-600 w-full h-64"
+        class="bg-gray-600 w-full h-full"
       ></div>
     </div>
     <div class="flex flex-col flex-1 w-full flex-grow p-6">
@@ -30,7 +31,8 @@
         <div class="text-xl font-bold mb-1 pb-1 border-b">{{business.name}}</div>
       </header>
       <div class="text-sm">
-        <div class="short_description">{{business.short_description}}</div>
+        <div v-if="expanded">{{business.long_description}}</div>
+        <div v-else>{{business.short_description}}</div>
       </div>
       <div style="flex: 1">
         <a
@@ -51,7 +53,7 @@
 </template>
 <script>
 export default {
-  props: ['business'],
+  props: ['business', 'expanded'],
   computed: {
     territory () {
       const primary = this.business.territories[0]
