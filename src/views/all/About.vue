@@ -11,7 +11,7 @@
         </p>
       </section>
       <section class="space-y-2">
-        <h2 class="text-2xl font-bold">FAQs</h2>
+        <h2 class="text-xl font-bold">FAQs</h2>
         <ul class="space-y-4">
           <li class="font-bold">Who is considered Native?</li>
           <p class="text-base text-gray-600 leading-normal mb-6">A Native person is someone who is a citizen of a federally recognized nation. Visit the <a class="underline" target="_blank" rel="noopener noreferrer" href="https://www.bia.gov/frequently-asked-questions">BIA FAQs</a> for more answers on this question.</p>
