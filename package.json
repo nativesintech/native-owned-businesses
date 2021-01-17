@@ -14,13 +14,16 @@
     "apollo-link-http": "^1.5.17",
     "axios": "latest",
     "core-js": "^3.1.2",
+    "gotql": "^2.0.3",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
+    "mapbox-gl": "^2.0.0",
     "register-service-worker": "^1.6.2",
     "tailwindcss": "^1.7.3",
     "typeface-inter": "^3.15.0",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.3",
+    "vue-mapbox": "^0.4.1",
     "vue-router": "^3.0.6",
     "vue-select": "^3.10.5",
     "vuex": "^3.0.1"
@@ -41,5 +44,24 @@
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",
     "vue-template-compiler": "^2.6.10"
-  }
+  },
+  "description": "The frontend for a directory of native-owned businesses",
+  "main": ".eslintrc.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nativesintech/native-owned-businesses.git"
+  },
+  "keywords": [
+    "indigenous",
+    "native"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nativesintech/native-owned-businesses/issues"
+  },
+  "homepage": "https://github.com/nativesintech/native-owned-businesses#readme"
 }

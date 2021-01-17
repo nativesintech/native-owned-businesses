@@ -12,6 +12,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 
 import 'typeface-inter'
 import './styles/screen.scss'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 Vue.config.productionTip = false
 
