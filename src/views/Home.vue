@@ -1,115 +1,115 @@
 <template>
-  <div class="flex flex-col text-left">
-    <div
-      ref="hidebar"
-      :style="search_offset"
-      v-if="!$route.query.hide_search"
-      class="flex flex-col border-b-0 sticky bg-white p-6
-      transition-all duration-200 ease-in-out shadow mb-6 rounded
-      z-20">
-
-      <div ref="search" class="flex flex-col">
-        <transition
-          name="fade-in-down"
-          mode="out-in"
-        >
-          <div
-            v-if="!all_businesses"
-            class="pb-4 flex-1 w-1/3 flex flex-col flex-grow"
-          >
-            <label
-              for="search-input"
-              class="text-base font-semibold m-0"
-            >help me find:</label>
-            <input
-              id="search-input"
-              class="border-0 border-b text-xl focus:border-gray-600
-              transition-colors focus:outline-none"
-              placeholder="Restaurants..."
-              v-model="search_query"
-            />
+  <div>
+    <main>
+      <div
+        ref="hidebar"
+        :style="search_offset"
+        v-if="!$route.query.hide_search"
+        class="flex flex-col border-b-0 sticky bg-white p-6
+        transition-all duration-200 ease-in-out shadow mb-6 rounded">
+          <div ref="search" class="flex flex-col">
+            <transition
+              name="fade-in-down"
+              mode="out-in"
+            >
+              <div
+                v-if="!all_businesses"
+                class="pb-4 flex-1 w-1/3 flex flex-col flex-grow"
+              >
+                <label
+                  for="search-input"
+                  class="text-base font-semibold m-0"
+                >help me find:</label>
+                <input
+                  id="search-input"
+                  class="border-0 border-b text-xl focus:border-gray-600
+                  transition-colors focus:outline-none"
+                  placeholder="Restaurants..."
+                  v-model="search_query"
+                />
+              </div>
+            </transition>
+            <div class="flex flex-row flex-wrap flex-shrink">
+              <ToggleSearch
+                class="mb-4 lg:mb-0"
+                text="all types of business"
+                :onchange="(v) => $set( this, 'all_businesses', v )"
+              />
+                <v-select
+                  class="mb-4 lg:mb-0"
+                  placeholder="Tribal affiliation (e.g. Osage)"
+                  v-model="search_affiliations"
+                  multiple
+                  :options="territories"
+                  label="name"
+                />
+                <v-select
+                  class="mb-4 lg:mb-0"
+                  placeholder="Tags (e.g. Food)"
+                  v-model="search_tags"
+                  multiple
+                  :options="tags"
+                  label="name"
+                />
+            </div>
           </div>
-        </transition>
-        <div class="flex flex-row flex-wrap flex-shrink">
-          <ToggleSearch
-            class="mb-4 lg:mb-0"
-            text="all types of business"
-            :onchange="(v) => $set( this, 'all_businesses', v )"
-          />
-            <v-select
-              class="mb-4 lg:mb-0"
-              placeholder="Tribal affiliation (e.g. Osage)"
-              v-model="search_affiliations"
-              label="name"
-              :options="territories"
-              multiple
-            />
-            <v-select
-              class="mb-4 lg:mb-0"
-              placeholder="Tags (e.g. Food)"
-              v-model="search_tags"
-              label="name"
-              :options="tags"
-              multiple
-            />
+          <transition name="fade-in-down">
+            <button
+              v-if="is_scrolled_down"
+              @click="toggle_search"
+              class="border py-1 px-2 box-border text-md w-48"
+            >{{show_search ? 'hide' : 'show' }}</button>
+          </transition>
         </div>
-      </div>
-      <transition name="fade-in-down">
-        <button
-          v-if="is_scrolled_down"
-          @click="toggle_search"
-          class="border py-1 px-2 box-border text-md w-48"
-        >{{show_search ? 'hide' : 'show' }}</button>
-      </transition>
-    </div>
-    <div
-      class="font-bold text-lg whitespace-normal inline-block"
-      v-if="minimum_search_criteria"
-    >
-      <span>Showing&nbsp;</span>
-        <span v-if="search_query">
-          results for&nbsp;
-          <span class="text-gray-500">
-            "{{search_query}}"
+        <div class="font-bold text-lg whitespace-normal inline-block">
+          <transition name="fade-in-down">
+            <span v-if="minimum_search_criteria">Showing&nbsp;</span>
+          </transition>
+          <transition name="fade-in-down">
+            <span key="all" v-if="all_businesses" class="text-gray-500">
+              all businesses&nbsp;
+            </span>
+            <span v-else-if="search_query">
+              results for&nbsp;
+              <span class="text-gray-500">
+                "{{search_query}}"
+              </span>
+            </span>
+          </transition>
+          <span v-if="minimum_search_criteria && search_location">
+            in <span class="text-gray-500">{{search_location}}</span>&nbsp;
           </span>
-        </span>
-        <span key="all" v-else class="text-gray-500">
-          businesses&nbsp;
-        </span>
-      <span v-if="minimum_search_criteria && search_location">
-        in <span class="text-gray-500">{{search_location}}</span>&nbsp;
-      </span>
 
-      <!-- TODO(nsahler): i18n friendly -->
-      <span v-if="minimum_search_criteria && search_affiliations.length > 0">
-        &nbsp;affiliated with the&nbsp;
-        <span
-          v-for="(nation, i) in search_affiliations"
-          :key="i"
-        >
-          <span class="text-gray-500">{{nation.name}}</span>
-          <span v-if="i + 1 < search_affiliations.length - 1">
-            ,&nbsp;
+          <!-- TODO(nsahler): i18n friendly -->
+          <span v-if="minimum_search_criteria && search_affiliations.length > 0">
+            &nbsp;affiliated with the&nbsp;
+            <span
+              v-for="(nation, i) in search_affiliations"
+              :key="i"
+            >
+              <span class="text-gray-500">{{nation.name}}</span>
+              <span v-if="i + 1 < search_affiliations.length - 1">
+                ,&nbsp;
+              </span>
+              <span v-if="i + 1 === search_affiliations.length - 1">
+                &nbsp;or&nbsp;
+              </span>
+            </span>
+            <span>&nbsp;nation</span>
+            <span v-if="search_affiliations.length > 1">s</span>...
           </span>
-          <span v-if="i + 1 === search_affiliations.length - 1">
-            &nbsp;or&nbsp;
-          </span>
-        </span>
-        <span>&nbsp;nation</span>
-        <span v-if="search_affiliations.length > 1">s</span>...
-      </span>
+        </div>
+        <SearchResults class="z-10" v-if="show_search_results"  :businesses="businesses"/>
+          <transition v-else-if="$apollo.queries.businesses.loading" name="fade-in-left" mode="out-in" appear>
+            <Loader/>
+          </transition>
+          <transition v-else-if="minimum_search_criteria && businesses" name="fade-in-left" mode="out-in" appear>
+            <div class="py-4 text-center text-lg text-gray-700">
+              <h2>No Results Found</h2>
+            </div>
+          </transition>
+      </main>
     </div>
-
-    <SearchResults class="z-10" v-if="show_search_results"  :businesses="businesses"/>
-    <transition v-else-if="$apollo.queries.businesses.loading" name="fade-in-left" mode="out-in" appear>
-      <Loader/>
-    </transition>
-    <transition v-else-if="minimum_search_criteria && businesses" name="fade-in-left" mode="out-in" appear>
-      <div class="py-4 text-center text-lg text-gray-700">
-        <h2>No Results Found</h2>
-      </div>
-    </transition>
-  </div>
 </template>
 
 <script>
