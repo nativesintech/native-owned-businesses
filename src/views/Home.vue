@@ -53,7 +53,7 @@
                 />
             </div>
           </div>
-          <transition name="fadee-in-down">
+          <transition name="fade-in-down">
             <button
               v-if="is_scrolled_down"
               @click="toggle_search"
