@@ -14,9 +14,20 @@
             Native Owned Businesses
           </h1>
         </div>
-        <router-link to="/about">
-          About
-        </router-link>
+        <div class="space-x-2">
+          <router-link to="/about">
+            About
+          </router-link>
+          <router-link to="/login" v-if="!is_logged_in">
+            Login
+          </router-link>
+          <router-link to="/owner" v-if="is_logged_in">
+            My Profile
+          </router-link>
+          <router-link to="/login" v-if="is_logged_in">
+            Logout
+          </router-link>
+        </div>
       </nav>
     </header>
   </router-link>
@@ -24,9 +35,14 @@
 
 <script>
 export default {
+  data () {
+    return {
+      is_embedded: this.$route.query.embed
+    }
+  },
   computed: {
-    is_embedded () {
-      return this.$route.query.embed
+    is_logged_in () {
+      return Boolean(this.$store.state.user)
     }
   }
 }
