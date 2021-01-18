@@ -26,6 +26,7 @@ const getHeaders = () => {
 
   if (token) {
     headers.authorization = `Bearer ${token}`
+    headers['x-hasura-role'] = 'public'
   }
 
   return headers
