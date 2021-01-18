@@ -22,7 +22,7 @@ Vue.component('v-select', VueSelect)
 
 const getHeaders = () => {
   const headers = {}
-  const token = window.localStorage.getItem('apollo-token')
+  const token = window.localStorage.getItem('session')
 
   if (token) {
     headers.authorization = `Bearer ${token}`
