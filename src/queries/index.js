@@ -92,6 +92,13 @@ export const GET_TERRITORIES = gqlParse(parse({
   }
 }, 'query'))
 
+export const GET_LOGGED_IN_USER_BUSINESSES = gqlParse(parse({
+  operation: {
+    name: 'businesses',
+    fields: BUSINESS_FIELDS
+  }
+}, 'query'))
+
 /* const GET_TERRITORIES = gql`
 query($name: String!) {
   territories(where: { name: { _similar: $name }}) {
