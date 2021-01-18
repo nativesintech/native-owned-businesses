@@ -11,7 +11,7 @@
   </main>
 </template>
 <script>
-import { parseToken } from '../helpers'
+import { parseToken } from '../../helpers'
 
 export default {
   data () {

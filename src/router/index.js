@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import About from '../views/About.vue'
-import Business from '../views/Business.vue'
-import Login from '../views/Login.vue'
+
+import Home from '../views/all/Home.vue'
+import About from '../views/all/About.vue'
+import Business from '../views/all/Business.vue'
+// eslint-disable-next-line import/no-named-default
+import { default as OwnerHome } from '../views/owner/Home.vue'
+import AddBusiness from '../views/owner/AddBusiness.vue'
+import Login from '../views/all/Login.vue'
 
 Vue.use(VueRouter)
 
@@ -19,7 +23,18 @@ const routes = [
     name: 'business',
     component: Business,
     props: true
-  }, {
+  },
+  {
+    path: '/owner',
+    name: 'owner-home',
+    component: OwnerHome
+  },
+  {
+    path: '/owner/add-business',
+    name: 'owner-add-business',
+    component: AddBusiness
+  },
+  {
     path: '/login',
     name: 'login',
     component: Login
