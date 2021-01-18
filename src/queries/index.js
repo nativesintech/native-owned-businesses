@@ -23,6 +23,10 @@ const BUSINESS_FIELDS = [
         }
       }]
     }
+  }, {
+    owners: {
+      fields: ['user_id']
+    }
   }
 ]
 
