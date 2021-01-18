@@ -5,6 +5,7 @@ import VueSelect from 'vue-select'
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
+import store from './store'
 
 import ApolloClient from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
@@ -48,5 +49,6 @@ const apolloProvider = new VueApollo({ defaultClient })
 new Vue({
   router,
   apolloProvider,
+  store,
   render: h => h(App)
 }).$mount('#app')

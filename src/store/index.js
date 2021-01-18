@@ -9,13 +9,17 @@ const formatUrl = (path) => {
   return `${API_URL}/${path}`
 }
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
-    results: null
+    results: null,
+    user: undefined
   },
   mutations: {
     set_results (store, results) {
       store.results = results
+    },
+    handle_user (store, user) {
+      store.user = user
     }
   },
   actions: {
@@ -28,5 +32,8 @@ export default new Vuex.Store({
     }
   },
   modules: {
-  }
+  },
+  devtools: process.env.NODE_ENV !== 'production'
 })
+
+export default store
