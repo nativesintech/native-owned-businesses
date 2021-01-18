@@ -14,11 +14,18 @@
 <script>
 import { GET_LOGGED_IN_USER_BUSINESSES } from '@/queries'
 import BusinessCard from '@/components/BusinessCard'
+import { mapState } from 'vuex'
 
 export default {
+  computed: {
+    ...mapState(['user'])
+  },
   apollo: {
     businesses: {
       query: GET_LOGGED_IN_USER_BUSINESSES,
+      variables () {
+        return { owner_id: this.user.sub }
+      },
       context: {
         headers: {
           'x-hasura-role': 'user'

@@ -25,6 +25,12 @@
           <p class="text-base text-gray-600 leading-normal mb-6">In order to maintain the integrity of this directory we are adding business owners manually. It will take time for the spectrum of businesses to show up here.</p>
         </ul>
       </section>
+      <section class="space-y-2">
+        <h2 class="text-xl font-bold">Credits</h2>
+        <p class="text-base text-gray-600 leading-normal mb-6">
+          <span class="font-bold">Loading icon:</span> Turtle by <a class="underline" target="_blank" rel="noopener noreferrer" href="https://thenounproject.com/search/?creator=64420&q=turtle&i=1097454">Ben Davis</a> from <a class="https://thenounproject.com">The Noun Project</a>. Creative Commons.
+        </p>
+      </section>
     </main>
   </div>
 </template>
