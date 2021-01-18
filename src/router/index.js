@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Business from '../views/Business.vue'
+import Login from '../views/Login.vue'
 
 Vue.use(VueRouter)
 
@@ -18,6 +19,10 @@ const routes = [
     name: 'business',
     component: Business,
     props: true
+  }, {
+    path: '/login',
+    name: 'login',
+    component: Login
   }
 ]
 
