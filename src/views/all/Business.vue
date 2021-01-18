@@ -9,7 +9,7 @@
           Locations
         </h2>
         <div
-          class="locations flex flex-row flex overflow-hidden md:flex row border
+          class="locations flex-row flex overflow-hidden md:flex row border
           border-gray-600 mb-6 shadow rounded h-64"
         >
           <div class="flex-grow flex-1 flex flex-col pad-6">
