@@ -6,7 +6,8 @@ import About from '../views/all/About.vue'
 import Business from '../views/all/Business.vue'
 // eslint-disable-next-line import/no-named-default
 import { default as OwnerHome } from '../views/owner/Home.vue'
-import AddBusiness from '../views/owner/AddBusiness.vue'
+import NewBusiness from '../views/owner/NewBusiness.vue'
+import EditBusiness from '../views/owner/EditBusiness.vue'
 import Login from '../views/all/Login.vue'
 
 Vue.use(VueRouter)
@@ -30,9 +31,14 @@ const routes = [
     component: OwnerHome
   },
   {
-    path: '/owner/add-business',
-    name: 'owner-add-business',
-    component: AddBusiness
+    path: '/owner/b/new',
+    name: 'owner-business-new',
+    component: NewBusiness
+  },
+  {
+    path: '/owner/b/:id/edit',
+    name: 'owner-business-edit',
+    component: EditBusiness
   },
   {
     path: '/login',

@@ -21,7 +21,10 @@
       <header>
         <div class="text-sm w-full flex flex-row justify-between mb-1
           text-gray-800">
-          <div class="affiliation">{{territory.name}}</div>
+          <div class="flex justify-between w-100 flex-grow">
+            <div class="affiliation">{{territory.name}}</div>
+            <div v-if="owner"><router-link :to="{ name: 'owner-business-edit', params: { id: business.id } }">Edit</router-link></div>
+          </div>
           <div class="location">
             <a :href="location_link" v-if="primary_location">
               {{primary_location.name}}
@@ -52,9 +55,17 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+
 export default {
   props: ['business', 'expanded'],
   computed: {
+    ...mapState(['user']),
+    owner () {
+      return this.business.owners
+        .map(owner => String(owner.user_id))
+        .includes(this.user.sub)
+    },
     territory () {
       const primary = this.business.territories[0]
       return primary ? primary.territory : null

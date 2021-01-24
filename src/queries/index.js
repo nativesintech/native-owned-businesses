@@ -23,6 +23,10 @@ const BUSINESS_FIELDS = [
         }
       }]
     }
+  }, {
+    owners: {
+      fields: ['user_id']
+    }
   }
 ]
 
@@ -89,6 +93,19 @@ export const GET_TERRITORIES = gqlParse(parse({
   operation: {
     name: 'territories',
     fields: ['id', 'name', 'description_url']
+  }
+}, 'query'))
+
+export const GET_LOGGED_IN_USER_BUSINESSES = gqlParse(parse({
+  variables: {
+    owner_id: { type: 'bigint', value: '!' }
+  },
+  operation: {
+    name: 'businesses',
+    fields: BUSINESS_FIELDS,
+    args: {
+      where: { owners: { user_id: { _eq: '$owner_id' } } }
+    }
   }
 }, 'query'))
 

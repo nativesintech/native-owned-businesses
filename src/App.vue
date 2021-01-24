@@ -7,8 +7,15 @@
 
 <script>
 import Header from '@/components/Header'
+import { parseToken } from './helpers'
 
 export default {
+  mounted () {
+    const token = localStorage.getItem('session')
+    if (token) {
+      this.$store.commit('handle_user', parseToken(token))
+    }
+  },
   components: { Header }
 }
 </script>
