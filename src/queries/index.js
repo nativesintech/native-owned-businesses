@@ -1,9 +1,7 @@
 import gql from 'graphql-tag'
 import { parse } from 'gotql/dist/modules/parser'
-import { literal } from 'gotql/dist/helpers/literal'
 
 const query = (q) => gql(parse(q, 'query'))
-const mutation = (q) => gql(parse(q, 'mutation'))
 
 export const transaction = (...mutations) => {
   /* Merge multiple mutations into one transaction - since this is a Hasura-only behaviour */
@@ -127,11 +125,6 @@ export const GET_LOGGED_IN_USER_BUSINESSES = query({
   }
 })
 
-// const TAG_FIELDS = [ 'id', 'name' ]
-const BUSINESSES_TAGS_FIELDS = [
-  { returning: { fields: [{ business: { fields: BUSINESS_FIELDS } }] } }
-]
-
 /* MUTATIONS */
 
 export const SAVE_BUSINESS = gql`
@@ -178,38 +171,3 @@ mutation (
     territories { territory { id, name, description_url }}
   }
 }`
-
-/** TERRITORIES **/
-export const DELETE_BUSINESSES_TERRITORIES = mutation({
-  variables: {
-    tag_id: { type: 'bigint', value: 'ignore' },
-    business_id: { type: 'uuid', value: 'ignore' }
-  },
-  operation: {
-    name: 'delete_businesses_tags',
-    args: {
-      where: {
-        business_id: { _eq: '$business_id' },
-        tag_id: { _eq: '$tag_id' }
-      }
-    },
-    fields: [ 'affected_rows', ...BUSINESSES_TAGS_FIELDS ]
-  }
-})
-
-export const INSERT_BUSINESSES_TERRITORIES = mutation({
-  variables: {
-    tags: { type: '[businesses_tags_insert_input!]!', value: 'ignore' }
-  },
-  operation: {
-    name: 'insert_businesses_tags',
-    args: {
-      objects: '$tags',
-      on_conflict: {
-        constraint: literal`businesses_tags_business_id_tag_id_key`,
-        update_columns: literal`[]`
-      }
-    },
-    fields: [ 'affected_rows', ...BUSINESSES_TAGS_FIELDS ]
-  }
-})
