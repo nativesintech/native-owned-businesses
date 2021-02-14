@@ -1,13 +1,13 @@
 <template>
   <main>
-    <section class="flex justify-between items-center mb-4">
-      <h1 class="font-bold text-2xl">My Businesses</h1>
-      <router-link to="/owner/b/new" class="bg-black rounded text-white px-6 py-2">
+    <section class="flex justify-between items-center mb-4 align-middle">
+      <h1 class="text-2xl">My Businesses</h1>
+      <router-link to="/b/new" class="bg-black rounded text-white px-6 py-2">
         Add Business
       </router-link>
     </section>
     <section v-for="business in businesses" :key="business.id">
-      <BusinessCard :business="business" :edit="true" />
+      <BusinessCard :business="business" />
     </section>
   </main>
 </template>

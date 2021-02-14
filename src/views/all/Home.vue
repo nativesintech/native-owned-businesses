@@ -36,19 +36,19 @@
                 :onchange="(v) => $set( this, 'all_businesses', v )"
               />
                 <v-select
-                  class="mb-4 lg:mb-0"
+                  class="mb-4 mr-4 lg:mb-0"
                   placeholder="Tribal affiliation (e.g. Osage)"
                   v-model="search_affiliations"
                   multiple
-                  :options="territories"
+                  :options="all_territories"
                   label="name"
                 />
                 <v-select
-                  class="mb-4 lg:mb-0"
+                  class="mb-4 mr-4 lg:mb-0"
                   placeholder="Tags (e.g. Food)"
                   v-model="search_tags"
                   multiple
-                  :options="tags"
+                  :options="all_tags"
                   label="name"
                 />
             </div>
@@ -119,8 +119,8 @@ import SearchResults from '@/components/SearchResults'
 import Loader from '@/components/Loader'
 
 import {
-  GET_TAGS,
-  GET_TERRITORIES,
+  GET_ALL_TAGS,
+  GET_ALL_TERRITORIES,
   getBusinessQuery
 } from '@/queries'
 
@@ -179,10 +179,8 @@ export default {
         return { query, affiliations, tags }
       }
     },
-    tags: GET_TAGS,
-    territories: {
-      query: GET_TERRITORIES
-    }
+    all_tags: GET_ALL_TAGS,
+    all_territories: GET_ALL_TERRITORIES
   }
 }
 </script>

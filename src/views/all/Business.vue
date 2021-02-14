@@ -113,9 +113,6 @@ export default {
       variables () {
         const { id } = this
         return { id }
-      },
-      update (data) {
-        return data.business[0]
       }
     }
   }

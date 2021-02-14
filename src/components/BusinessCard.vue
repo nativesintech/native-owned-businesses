@@ -22,12 +22,12 @@
         <div class="text-sm w-full flex flex-row justify-between mb-1
           text-gray-800">
           <div class="flex justify-between w-100 flex-grow">
-            <div class="affiliation">{{territory.name}}</div>
-            <div v-if="owner"><router-link :to="{ name: 'owner-business-edit', params: { id: business.id } }">Edit</router-link></div>
+            <div v-if="territory" class="affiliation">{{territory.name}}</div>
+            <div v-if="owner"><router-link :to="{ name: 'business-edit', params: { id: business.id } }">Edit</router-link></div>
           </div>
           <div class="location">
-            <a :href="location_link" v-if="primary_location">
-              {{primary_location.name}}
+            <a :href="location_link" v-if="business.location">
+              {{phyical_address.name}}
             </a>
           </div>
         </div>
@@ -62,6 +62,7 @@ export default {
   computed: {
     ...mapState(['user']),
     owner () {
+      if (!this.business.owners) return null
       return this.business.owners
         .map(owner => String(owner.user_id))
         .includes(this.user.sub)
@@ -70,11 +71,8 @@ export default {
       const primary = this.business.territories[0]
       return primary ? primary.territory : null
     },
-    primary_location () {
-      return this.business.locations[0] || null
-    },
     location_link () {
-      let [lat, lon] = this.primary_location.location.coordinates
+      let [lat, lon] = this.business.location.location.coordinates
       return `https://www.google.com/maps/place/${lat},${lon}`
     },
     tags () {
