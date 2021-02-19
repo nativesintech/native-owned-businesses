@@ -5,3 +5,5 @@ export const parseToken = (token) => {
     return null
   }
 }
+
+export const googleToGeoJSON = ({ location }) => ({ type: 'Point', coordinates: [location.lng, location.lat] })

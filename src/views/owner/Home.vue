@@ -13,6 +13,8 @@
 </template>
 <script>
 import { GET_LOGGED_IN_USER_BUSINESSES } from '@/queries'
+import { CONTEXT_LOGGED_IN } from '@/constants'
+
 import BusinessCard from '@/components/BusinessCard'
 import { mapState } from 'vuex'
 
@@ -22,14 +24,10 @@ export default {
   },
   apollo: {
     businesses: {
+      context: CONTEXT_LOGGED_IN,
       query: GET_LOGGED_IN_USER_BUSINESSES,
       variables () {
         return { owner_id: this.user.sub }
-      },
-      context: {
-        headers: {
-          'x-hasura-role': 'user'
-        }
       }
     }
   },

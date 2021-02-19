@@ -10,7 +10,7 @@
   </LabeledField>
 </template>
 <script>
-import LabeledField from '@/components/business/edit/LabeledField'
+import LabeledField from './LabeledField'
 
 export default {
   props: ['name', 'label', 'value', 'textarea'],

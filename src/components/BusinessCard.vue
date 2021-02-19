@@ -27,7 +27,7 @@
           </div>
           <div class="location">
             <a :href="location_link" v-if="business.location">
-              {{phyical_address.name}}
+              {{business.physical_address}}
             </a>
           </div>
         </div>
@@ -72,8 +72,8 @@ export default {
       return primary ? primary.territory : null
     },
     location_link () {
-      let [lat, lon] = this.business.location.location.coordinates
-      return `https://www.google.com/maps/place/${lat},${lon}`
+      let [lng, lat] = this.business.location.coordinates
+      return `https://www.google.com/maps/place/${lat},${lng}`
     },
     tags () {
       return this.business.tags.map(i => i.tag)

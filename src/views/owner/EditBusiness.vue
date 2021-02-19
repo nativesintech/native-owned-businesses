@@ -91,24 +91,43 @@
           (<a class="text-blue-500" href="https://support.google.com/maps/answer/7047426">more info</a>),
           or describe the address and move the cursor below to the closest location.
         </label>
+
+        <label v-if="geocodeResult" class="text-sm text-gray-500 leading-normal mb-2">
+          Found location: {{geocodeResult.formatted_address}}
+        </label>
+        <Map
+          class="h-64 border-gray-500 border"
+          :location="business.location"
+          :zoom="9"
+        />
       </div>
     </div>
-    <div class="flex flex-col justify-end md:flex-row">
+    <div class="flex flex-row justify-end items-center md:flex-row">
+      <transition name="fade-in-down" mode="out-in" appear>
+        <div class="flex flex-col justify-center text-gray-500 mr-4">
+          <span v-if="saveState == SaveStates.SAVING">Saving...</span>
+          <span v-else-if="saveState == SaveStates.ERROR" class="text-red-500">Error saving business.</span>
+          <span v-else-if="saveState == SaveStates.SUCCESS">Business saved.</span>
+        </div>
+      </transition>
       <button
-        class="text-green-500 text-white px-6 py-2 mr-4 rounded"
+        class="text-green-500 px-6 py-2 mr-4 border hover:bg-green-500 hover:text-white transition-colors duration-150 rounded"
         @click="saveBusiness"
       >Save</button>
-      <button class="text-red-500 text-white px-6 py-2 rounded" type="submit">Delete</button>
+      <button class="text-red-500 text-white py-2 underline hover:no-underline rounded" type="submit">Delete</button>
     </div>
     <h1 class="text-2xl">Business Preview</h1>
-    <p class="text-"></p>
-    <BusinessCard :business="business_preview"/>
+    <BusinessCard :business="business" />
   </main>
 </template>
 <script>
 import BusinessCard from '@/components/BusinessCard'
-import LabeledInput from '@/components/business/edit/LabeledInput'
-import LabeledField from '@/components/business/edit/LabeledField'
+import LabeledInput from '@/components/ui/LabeledInput'
+import LabeledField from '@/components/ui/LabeledField'
+import Map from '@/components/business/Map'
+
+import { googleToGeoJSON } from '@/helpers'
+import { CONTEXT_LOGGED_IN, SaveStates } from '@/constants'
 
 import { mapState } from 'vuex'
 import axios from 'axios'
@@ -120,28 +139,13 @@ import {
   SAVE_BUSINESS
 } from '@/queries'
 
-const loggedInContext = {
-  headers: {
-    'x-hasura-role': 'user'
-  }
-}
-
 export default {
   props: ['id'],
   data () {
     return {
-      business: {
-        name: null,
-        short_description: null,
-        long_description: null,
-        external_url: null,
-        physical_address: '',
-        location: {},
-        /* Relational */
-        tags: [],
-        territories: [],
-        image_assets: []
-      }
+      geocodeResult: null,
+      saveState: null,
+      SaveStates
     }
   },
   apollo: {
@@ -154,13 +158,10 @@ export default {
       }
     }
   },
-  components: { BusinessCard, LabeledInput, LabeledField },
+  components: { BusinessCard, LabeledInput, LabeledField, Map },
   computed: {
     ...mapState(['user']),
 
-    business_preview () {
-      return this.business
-    },
     tags_edit: {
       get () {
         return this.business.tags.map(i => i.tag)
@@ -194,36 +195,45 @@ export default {
         variables: { id: business.id }
       })
     },
-    saveBusiness () {
+    async saveBusiness () {
       /* eslint-disable camelcase */
-      let { id, name, short_description, long_description, external_url, tags, territories } = this.business
-      let business = { name, short_description, long_description, external_url }
+      let { id, name, short_description, long_description, external_url, location, physical_address, tags, territories } = this.business
+      let business = { name, short_description, long_description, external_url, location, physical_address }
+      this.saveState = SaveStates.SAVING
 
-      this.$apollo.mutate({
-        mutation: SAVE_BUSINESS,
-        context: loggedInContext,
-        variables: {
-          business,
-          business_id: id,
-          tags: tags.map(({ tag_id, business_id }) => ({ tag_id, business_id })),
-          territories: territories.map(({ territory_id, business_id }) => ({ territory_id, business_id }))
-        },
-        update: (cache, { data }) => {
-          const business = data.update_businesses_by_pk.business
-          if (business) {
-            this.writeBusinessToCache(cache, business)
+      try {
+        await this.$apollo.mutate({
+          mutation: SAVE_BUSINESS,
+          context: CONTEXT_LOGGED_IN,
+          variables: {
+            business,
+            business_id: id,
+            tags: tags.map(({ tag_id, business_id }) => ({ tag_id, business_id })),
+            territories: territories.map(({ territory_id, business_id }) => ({ territory_id, business_id }))
+          },
+          update: (cache, { data }) => {
+            const business = data.update_businesses_by_pk.business
+            if (business) {
+              this.writeBusinessToCache(cache, business)
+            }
+
+            this.saveState = SaveStates.SUCCESS
           }
-        }
-      })
+        })
+      } catch (e) {
+        this.saveState = SaveStates.ERROR
+      }
     },
     async geocode (address) {
       const key = process.env.VUE_APP_GOOGLE_GEOCODE_API_KEY
       const request = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${key}`)
       return request.data.results[0]
     },
-    searchLocation (e) {
+    async searchLocation (e) {
       if (e.key === 'Enter') {
-        this.business.location = this.geocode(this.business.physical_address).formatted_address
+        const geocode = await this.geocode(this.business.physical_address)
+        this.geocodeResult = geocode
+        this.business.location = googleToGeoJSON(geocode.geometry)
       }
     }
   }

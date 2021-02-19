@@ -24,7 +24,7 @@ const BUSINESS_FIELDS = [
   'id', 'name', 'short_description', 'long_description', 'external_url',
   'physical_address', 'location',
   {
-    territories: { fields: [{
+    territories: { fields: ['business_id', 'territory_id', {
       territory: {
         fields: ['id', 'name', 'description_url']
       }
