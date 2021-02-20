@@ -43,9 +43,16 @@ html {
 
 .vs__dropdown-menu {
   box-shadow: none !important;
+  margin-top: -1px;
+  margin-left: -1px;
+  width: 100%;
+
   @apply border-gray-600;
 }
 
+.vs--searchable {
+  @apply border border-gray-600 rounded text-lg p-2 box-border mb-4 mr-4;
+}
 
 .v-select {
   box-shadow: none !important;
@@ -53,14 +60,12 @@ html {
   max-width: 500px;
 
   .vs__dropdown-toggle {
-    // @apply border-gray-600;
     border: none;
     border-radius: 0px;
 
     .vs__selected {
       border-radius: 0;
       background: #FEFEFE;
-      // padding: 2px 5px;
       color: #555;
     }
 

@@ -112,6 +112,17 @@ export const GET_ALL_TERRITORIES = query({
   }
 })
 
+export const GET_FEATURED_BUSINESSES = query({
+  operation: {
+    name: 'businesses',
+    alias: 'featured_businesses',
+    fields: BUSINESS_FIELDS,
+    args: {
+      where: { tags: { tag: { name: { _eq: 'featured' } } } }
+    }
+  }
+})
+
 export const GET_LOGGED_IN_USER_BUSINESSES = query({
   variables: {
     owner_id: { type: 'bigint', value: '!' }

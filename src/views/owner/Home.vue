@@ -2,9 +2,9 @@
   <main>
     <section class="flex justify-between items-center mb-4 align-middle">
       <h1 class="text-2xl">My Businesses</h1>
-      <router-link to="/b/new" class="bg-black rounded text-white px-6 py-2">
+      <button class="bg-black rounded text-white px-6 py-2" @click="addBusiness">
         Add Business
-      </router-link>
+      </button>
     </section>
     <section v-for="business in businesses" :key="business.id">
       <BusinessCard :business="business" />
@@ -22,6 +22,7 @@ export default {
   computed: {
     ...mapState(['user'])
   },
+  components: { BusinessCard },
   apollo: {
     businesses: {
       context: CONTEXT_LOGGED_IN,
@@ -31,9 +32,10 @@ export default {
       }
     }
   },
-  components: {
-    BusinessCard
-  }
+  methods: {
+    addBusiness () {
 
+    }
+  }
 }
 </script>

@@ -5,7 +5,7 @@
         ref="hidebar"
         :style="search_offset"
         v-if="!$route.query.hide_search"
-        class="flex flex-col border-b-0 sticky bg-white p-6
+        class="flex flex-col border-b-0 sticky bg-white p-6 z-50
         transition-all duration-200 ease-in-out shadow mb-6 rounded">
           <div ref="search" class="flex flex-col">
             <transition
@@ -29,34 +29,35 @@
                 />
               </div>
             </transition>
-            <div class="flex flex-row flex-wrap flex-shrink">
-              <ToggleSearch
-                class="mb-4 lg:mb-0"
-                text="all types of business"
-                :onchange="(v) => $set( this, 'all_businesses', v )"
+            <div class="flex flex-row flex-wrap flex-shrink align-baseline">
+              <button
+                class="p-3 mb-4 mr-4 lg:mb-0 button-knockout"
+                :class="{ selected: all_businesses }"
+                @click="toggleAllBusinesses"
+              >all types of business</button>
+
+              <v-select
+                class="lg:mb-0"
+                placeholder="Tribal affiliation (e.g. Osage)"
+                v-model="search_affiliations"
+                multiple
+                :options="all_territories"
+                label="name"
               />
-                <v-select
-                  class="mb-4 mr-4 lg:mb-0"
-                  placeholder="Tribal affiliation (e.g. Osage)"
-                  v-model="search_affiliations"
-                  multiple
-                  :options="all_territories"
-                  label="name"
-                />
-                <v-select
-                  class="mb-4 mr-4 lg:mb-0"
-                  placeholder="Tags (e.g. Food)"
-                  v-model="search_tags"
-                  multiple
-                  :options="all_tags"
-                  label="name"
-                />
+              <v-select
+                class="lg:mb-0"
+                placeholder="Tags (e.g. Food)"
+                v-model="search_tags"
+                multiple
+                :options="all_tags"
+                label="name"
+              />
             </div>
           </div>
           <transition name="fade-in-down">
             <button
               v-if="is_scrolled_down"
-              @click="toggle_search"
+              @click="toggleSearch"
               class="border py-1 px-2 box-border text-md w-48"
             >{{show_search ? 'hide' : 'show' }}</button>
           </transition>
@@ -99,28 +100,28 @@
             <span v-if="search_affiliations.length > 1">s</span>...
           </span>
         </div>
-        <SearchResults class="z-10" v-if="show_search_results"  :businesses="businesses"/>
-          <transition v-else-if="$apollo.queries.businesses.loading" name="fade-in-left" mode="out-in" appear>
-            <Loader/>
-          </transition>
-          <transition v-else-if="minimum_search_criteria && businesses" name="fade-in-left" mode="out-in" appear>
-            <div class="py-4 text-center text-lg text-gray-700">
-              <h2>No Results Found</h2>
-            </div>
-          </transition>
+        <SearchResults class="z-10" v-if="show_search_results"  :businesses="searchResults"/>
+        <transition v-else-if="queryIsLoading" name="fade-in-left" mode="out-in" appear>
+          <Loader/>
+        </transition>
+        <transition v-else-if="minimum_search_criteria && searchResults" name="fade-in-left" mode="out-in" appear>
+          <div class="py-4 text-center text-lg text-gray-700">
+            <h2>No Results Found</h2>
+          </div>
+        </transition>
       </main>
     </div>
 </template>
 
 <script>
 import 'vue-select/dist/vue-select.css'
-import ToggleSearch from '@/components/ToggleSearch'
 import SearchResults from '@/components/SearchResults'
 import Loader from '@/components/Loader'
 
 import {
   GET_ALL_TAGS,
   GET_ALL_TERRITORIES,
+  GET_FEATURED_BUSINESSES,
   getBusinessQuery
 } from '@/queries'
 
@@ -145,13 +146,15 @@ export default {
     observer.observe(this.$refs.hidebar)
   },
   components: {
-    ToggleSearch,
     SearchResults,
     Loader
   },
   methods: {
-    toggle_search () {
+    toggleSearch () {
       this.show_search = !this.show_search
+    },
+    toggleAllBusinesses () {
+      this.all_businesses = !this.all_businesses
     }
   },
   computed: {
@@ -163,7 +166,15 @@ export default {
       return `top: ${height}px`
     },
     show_search_results () {
-      return this.minimum_search_criteria && this.businesses && this.businesses.length
+      return this.searchResults && this.searchResults.length
+    },
+    searchResults () {
+      return this.minimum_search_criteria ? this.businesses : this.featured_businesses
+    },
+    queryIsLoading () {
+      const queries = this.$apollo.queries
+      const query = this.minimum_search_criteria ? queries.businesses : queries.featured_businesses
+      return query.loading
     }
   },
   apollo: {
@@ -176,9 +187,10 @@ export default {
         const affiliations = this.search_affiliations.length > 0 ? this.search_affiliations.map(a => a.id) : null
         const tags = this.search_tags.length > 0 ? this.search_tags.map(t => t.id) : null
 
-        return { query, affiliations, tags }
+        return this.minimum_search_criteria ? { query, affiliations, tags } : {}
       }
     },
+    featured_businesses: GET_FEATURED_BUSINESSES,
     all_tags: GET_ALL_TAGS,
     all_territories: GET_ALL_TERRITORIES
   }

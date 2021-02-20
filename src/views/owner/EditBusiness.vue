@@ -51,7 +51,6 @@
         />
         <LabeledField name="tags" label="Tags">
           <v-select
-            class="border border-gray-600 rounded text-lg p-2 mb-4"
             placeholder="Tags (e.g. Food)"
             multiple
             :options="all_tags"
@@ -61,7 +60,6 @@
         </LabeledField>
         <LabeledField name="territories" label="Tribal, National and Land Affiliations">
           <v-select
-            class="border border-gray-600 rounded text-lg p-2 mb-4"
             placeholder="Tribal affiliation (e.g. Osage)"
             multiple
             :options="all_territories"

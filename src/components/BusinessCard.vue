@@ -62,7 +62,8 @@ export default {
   computed: {
     ...mapState(['user']),
     owner () {
-      if (!this.business.owners) return null
+      if (!this.business.owners || !this.user) return false
+
       return this.business.owners
         .map(owner => String(owner.user_id))
         .includes(this.user.sub)
