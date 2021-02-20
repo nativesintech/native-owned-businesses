@@ -58,7 +58,7 @@
             v-model="tags_edit"
           />
         </LabeledField>
-        <LabeledField name="territories" label="Tribal, National and Land Affiliations">
+        <LabeledField name="territories" label="Tribal, National, and Land Affiliations">
           <v-select
             placeholder="Tribal affiliation (e.g. Osage)"
             multiple
