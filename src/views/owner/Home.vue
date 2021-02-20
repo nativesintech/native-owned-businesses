@@ -12,7 +12,7 @@
   </main>
 </template>
 <script>
-import { GET_LOGGED_IN_USER_BUSINESSES } from '@/queries'
+import { GET_LOGGED_IN_USER_BUSINESSES, CREATE_BUSINESS } from '@/queries'
 import { CONTEXT_LOGGED_IN } from '@/constants'
 
 import BusinessCard from '@/components/BusinessCard'
@@ -33,8 +33,23 @@ export default {
     }
   },
   methods: {
-    addBusiness () {
-
+    async addBusiness () {
+      console.log('ok')
+      try {
+        await this.$apollo.mutate({
+          mutation: CREATE_BUSINESS,
+          context: CONTEXT_LOGGED_IN,
+          update: (cache, { data }) => {
+            this.$router.push({
+              name: 'business-edit',
+              params: { id: data.insert_businesses_one.id }
+            })
+          }
+        })
+      } catch (e) {
+        console.error(e)
+        // TODO(nsahler): Show error toast.
+      }
     }
   }
 }

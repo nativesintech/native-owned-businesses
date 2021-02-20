@@ -182,3 +182,21 @@ mutation (
     territories { territory { id, name, description_url }}
   }
 }`
+
+/* Automaticaly sets owner id and business id on backend */
+export const CREATE_BUSINESS = gql`
+mutation {
+  insert_businesses_one(object: {
+    name: "New Business",
+    owners: {
+        data: {}
+    }
+  }) {
+    name,
+    id,
+    owners {
+      user_id,
+      business_id
+    }
+  }
+}`

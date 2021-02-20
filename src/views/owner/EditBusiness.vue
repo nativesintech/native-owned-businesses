@@ -92,7 +92,12 @@
 
         <label v-if="geocodeResult" class="text-sm text-gray-500 leading-normal mb-2">
           Found location: {{geocodeResult.formatted_address}}
+          <div
+            class=" text-blue-500 cursor-pointer underline"
+            @click="setPhysicalAddressToGeocodedAddress"
+          >Update Address</div>
         </label>
+
         <Map
           class="h-64 border-gray-500 border"
           :location="business.location"
@@ -150,6 +155,7 @@ export default {
     all_tags: GET_ALL_TAGS,
     all_territories: GET_ALL_TERRITORIES,
     business: {
+      context: CONTEXT_LOGGED_IN,
       query () { return GET_BUSINESS_BY_ID },
       variables () {
         return { id: this.id }
@@ -192,6 +198,9 @@ export default {
         data: { business },
         variables: { id: business.id }
       })
+    },
+    setPhysicalAddressToGeocodedAddress () {
+      this.business.physical_address = this.geocodeResult.formatted_address
     },
     async saveBusiness () {
       /* eslint-disable camelcase */
