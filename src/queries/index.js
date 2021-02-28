@@ -1,12 +1,30 @@
-import { parse as gqlParse } from 'graphql'
+import gql from 'graphql-tag'
 import { parse } from 'gotql/dist/modules/parser'
 
+const query = (q) => gql(parse(q, 'query'))
+
+export const transaction = (...mutations) => {
+  /* Merge multiple mutations into one transaction - since this is a Hasura-only behaviour */
+  const selections = [].concat.apply([], mutations.map(mutation => mutation.definitions[0].selectionSet.selections))
+  const variableDefinitions = [].concat.apply([], mutations.map(mutation => mutation.definitions[0].variableDefinitions))
+
+  return {
+    kind: 'Document',
+    definitions: [{
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      variableDefinitions,
+      directives: [],
+      selectionSet: { kind: 'SelectionSet', selections }
+    }]
+  }
+}
+
 const BUSINESS_FIELDS = [
-  'id', 'name', 'short_description', 'long_description',
+  'id', 'name', 'short_description', 'long_description', 'external_url',
+  'physical_address', 'location',
   {
-    locations: { fields: ['id', 'location', 'name', 'postal_address'] }
-  }, {
-    territories: { fields: [{
+    territories: { fields: ['business_id', 'territory_id', {
       territory: {
         fields: ['id', 'name', 'description_url']
       }
@@ -17,7 +35,7 @@ const BUSINESS_FIELDS = [
     }
   }, {
     tags: {
-      fields: [{
+      fields: ['business_id', 'tag_id', {
         tag: {
           fields: ['id', 'name']
         }
@@ -30,24 +48,22 @@ const BUSINESS_FIELDS = [
   }
 ]
 
-export const GET_BUSINESS_BY_ID = gqlParse(parse({
+export const GET_BUSINESS_BY_ID = query({
   variables: {
-    id: { type: 'uuid', value: 'ignore' }
+    id: { type: 'uuid!', value: 'ignore' }
   },
   operation: {
-    name: 'businesses',
+    name: 'businesses_by_pk',
     alias: 'business',
-    args: {
-      where: { id: { _eq: '$id' } }
-    },
+    args: { id: '$id' },
     fields: BUSINESS_FIELDS
   }
-}, 'query'))
+})
 
-export const getBusinessQuery = (query, affiliations, tags) => {
+export const getBusinessQuery = (q, affiliations, tags) => {
   const filters = {}
   const args = {}
-  const textSearch = query && query.trim().length > 0
+  const textSearch = q && q.trim().length > 0
 
   if (affiliations.length > 0) {
     filters.territories = { territory: { id: {
@@ -59,13 +75,13 @@ export const getBusinessQuery = (query, affiliations, tags) => {
     filters.tags = { tag_id: { _in: '$tags' } }
   }
 
-  if (query) {
+  if (q) {
     args.args = { search: '$query' }
   }
 
   args.where = filters
 
-  const parsed = parse({
+  return query({
     variables: {
       query: { type: 'String', value: '!' },
       affiliations: { type: '[String!]', value: ' ' },
@@ -77,26 +93,37 @@ export const getBusinessQuery = (query, affiliations, tags) => {
       args,
       fields: BUSINESS_FIELDS
     }
-  }, 'query')
-  console.log(parsed)
-  return gqlParse(parsed)
+  })
 }
 
-export const GET_TAGS = gqlParse(parse({
+export const GET_ALL_TAGS = query({
   operation: {
     name: 'tags',
+    alias: 'all_tags',
     fields: ['name', 'id']
   }
-}, 'query'))
+})
 
-export const GET_TERRITORIES = gqlParse(parse({
+export const GET_ALL_TERRITORIES = query({
   operation: {
     name: 'territories',
+    alias: 'all_territories',
     fields: ['id', 'name', 'description_url']
   }
-}, 'query'))
+})
 
-export const GET_LOGGED_IN_USER_BUSINESSES = gqlParse(parse({
+export const GET_FEATURED_BUSINESSES = query({
+  operation: {
+    name: 'businesses',
+    alias: 'featured_businesses',
+    fields: BUSINESS_FIELDS,
+    args: {
+      where: { tags: { tag: { name: { _eq: 'featured' } } } }
+    }
+  }
+})
+
+export const GET_LOGGED_IN_USER_BUSINESSES = query({
   variables: {
     owner_id: { type: 'bigint', value: '!' }
   },
@@ -107,20 +134,69 @@ export const GET_LOGGED_IN_USER_BUSINESSES = gqlParse(parse({
       where: { owners: { user_id: { _eq: '$owner_id' } } }
     }
   }
-}, 'query'))
+})
 
-/* const GET_TERRITORIES = gql`
-query($name: String!) {
-  territories(where: { name: { _similar: $name }}) {
-    id
-    name
-    description_url
+/* MUTATIONS */
+
+export const SAVE_BUSINESS = gql`
+mutation (
+  $business_id: uuid!
+  $business: businesses_set_input!
+  $tags: [businesses_tags_insert_input!]!
+  $territories: [businesses_territories_insert_input!]!
+) {
+  delete_businesses_tags(where:{business_id:{_eq:$business_id}}) {
+    affected_rows,
+    returning {
+      business {
+        name
+        tags { tag { name } } }
+    }
   }
-}` */
+  insert_businesses_tags(objects:$tags) {
+    returning {
+      id
+      tag_id
+      business_id
+    }
+  }
+  delete_businesses_territories(where:{business_id:{_eq:$business_id}}) {
+    affected_rows,
+    returning {
+      business {
+        name
+        territories { territory { name } } }
+    }
+  }
+  insert_businesses_territories(objects:$territories) {
+    returning {
+      id
+      territory_id
+      business_id
+    }
+  }
+  update_businesses_by_pk(
+    pk_columns: {id: $business_id }
+    _set: $business) {
+    id name short_description long_description
+    territories { territory { id, name, description_url }}
+  }
+}`
 
-// territories: {
-//   query: GET_TERRITORIES,
-//   variables () {
-//     return { name: `%${this.search_affiliation}%` }
-//   }
-// }
+/* Automaticaly sets owner id and business id on backend */
+export const CREATE_BUSINESS = gql`
+mutation {
+  insert_businesses_one(object: {
+    name: "New Business",
+    owners: {
+        data: {}
+    }
+  }) {
+    name,
+    id,
+    owners {
+      user_id,
+      business_id
+    }
+  }
+}`
