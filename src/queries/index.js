@@ -143,12 +143,13 @@ mutation (
   $business_id: uuid!
   $business: businesses_set_input!
   $tags: [businesses_tags_insert_input!]!
+  $ignore_delete_tags: [bigint!]!
   $territories: [businesses_territories_insert_input!]!
 ) {
   delete_businesses_tags( where: {
     _and: [
-      {business_id:{_eq:$business_id}},
-      {_not: { tag: { name: { _eq: "featured" } } } }
+      {business_id: {_eq:$business_id}},
+      {_not: { tag_id: { _in: $ignore_delete_tags } }}
     ]
   }) {
     affected_rows,

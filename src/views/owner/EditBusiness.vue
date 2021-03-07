@@ -132,7 +132,7 @@ import LabeledInput from '@/components/ui/LabeledInput'
 import LabeledField from '@/components/ui/LabeledField'
 import Map from '@/components/business/Map'
 
-import { googleToGeoJSON } from '@/helpers'
+import { googleToGeoJSON, filterSpecialTags, SPECIAL_TAG_IDS } from '@/helpers'
 import { CONTEXT_LOGGED_IN, SaveStates } from '@/constants'
 
 import { mapState } from 'vuex'
@@ -172,7 +172,7 @@ export default {
 
     tags_edit: {
       get () {
-        return this.business.tags.map(i => i.tag)
+        return this.business.tags.filter(filterSpecialTags).map(i => i.tag)
       },
       set (values) {
         this.business.tags = values.map(tag => ({
@@ -210,6 +210,10 @@ export default {
       /* eslint-disable camelcase */
       let { id, name, short_description, long_description, external_url, location, physical_address, tags, territories } = this.business
       let business = { name, short_description, long_description, external_url, location, physical_address }
+
+      tags = tags.filter(filterSpecialTags).map(({ tag_id, business_id }) => ({ tag_id, business_id }))
+      territories = territories.map(({ territory_id, business_id }) => ({ territory_id, business_id }))
+
       this.saveState = SaveStates.SAVING
 
       try {
@@ -217,10 +221,9 @@ export default {
           mutation: SAVE_BUSINESS,
           context: CONTEXT_LOGGED_IN,
           variables: {
-            business,
             business_id: id,
-            tags: tags.map(({ tag_id, business_id }) => ({ tag_id, business_id })),
-            territories: territories.map(({ territory_id, business_id }) => ({ territory_id, business_id }))
+            ignore_delete_tags: SPECIAL_TAG_IDS,
+            business, tags, territories
           },
           update: (cache, { data }) => {
             const business = data.update_businesses_by_pk.business
