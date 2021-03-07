@@ -6,9 +6,7 @@
         Add Business
       </button>
     </section>
-    <section v-for="business in businesses" :key="business.id">
-      <BusinessCard :business="business" />
-    </section>
+    <BusinessCard :business="business" v-for="business in businesses" :key="business.id" />
   </main>
 </template>
 <script>
@@ -29,12 +27,14 @@ export default {
       query: GET_LOGGED_IN_USER_BUSINESSES,
       variables () {
         return { owner_id: this.user.sub }
+      },
+      skip () {
+        return !this.user
       }
     }
   },
   methods: {
     async addBusiness () {
-      console.log('ok')
       try {
         await this.$apollo.mutate({
           mutation: CREATE_BUSINESS,
