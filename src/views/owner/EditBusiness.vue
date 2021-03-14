@@ -114,10 +114,13 @@
         </div>
       </transition>
       <button
-        class="text-green-500 px-6 py-2 mr-4 border hover:bg-green-500 hover:text-white transition-colors duration-150 rounded"
+        class="text-green-500 px-6 py-2 mr-4 border border-green-500 hover:bg-green-500 hover:text-white transition-colors duration-150 rounded"
         @click="saveBusiness"
       >Save</button>
-      <button class="text-red-500 text-white py-2 underline hover:no-underline rounded" type="submit">Delete</button>
+      <button
+        class="text-red-500 text-white py-2 underline hover:no-underline rounded"
+        @click="deleteBusiness"
+      >Delete</button>
     </div>
     <h1 class="text-2xl">Business Preview</h1>
     <BusinessCard :business="business" />
@@ -129,7 +132,7 @@ import LabeledInput from '@/components/ui/LabeledInput'
 import LabeledField from '@/components/ui/LabeledField'
 import Map from '@/components/business/Map'
 
-import { googleToGeoJSON } from '@/helpers'
+import { googleToGeoJSON, filterSpecialTags, SPECIAL_TAG_IDS } from '@/helpers'
 import { CONTEXT_LOGGED_IN, SaveStates } from '@/constants'
 
 import { mapState } from 'vuex'
@@ -139,7 +142,8 @@ import {
   GET_BUSINESS_BY_ID,
   GET_ALL_TAGS,
   GET_ALL_TERRITORIES,
-  SAVE_BUSINESS
+  SAVE_BUSINESS,
+  DELETE_BUSINESS
 } from '@/queries'
 
 export default {
@@ -168,7 +172,7 @@ export default {
 
     tags_edit: {
       get () {
-        return this.business.tags.map(i => i.tag)
+        return this.business.tags.filter(filterSpecialTags).map(i => i.tag)
       },
       set (values) {
         this.business.tags = values.map(tag => ({
@@ -206,6 +210,10 @@ export default {
       /* eslint-disable camelcase */
       let { id, name, short_description, long_description, external_url, location, physical_address, tags, territories } = this.business
       let business = { name, short_description, long_description, external_url, location, physical_address }
+
+      tags = tags.filter(filterSpecialTags).map(({ tag_id, business_id }) => ({ tag_id, business_id }))
+      territories = territories.map(({ territory_id, business_id }) => ({ territory_id, business_id }))
+
       this.saveState = SaveStates.SAVING
 
       try {
@@ -213,10 +221,9 @@ export default {
           mutation: SAVE_BUSINESS,
           context: CONTEXT_LOGGED_IN,
           variables: {
-            business,
             business_id: id,
-            tags: tags.map(({ tag_id, business_id }) => ({ tag_id, business_id })),
-            territories: territories.map(({ territory_id, business_id }) => ({ territory_id, business_id }))
+            ignore_delete_tags: SPECIAL_TAG_IDS,
+            business, tags, territories
           },
           update: (cache, { data }) => {
             const business = data.update_businesses_by_pk.business
@@ -229,6 +236,24 @@ export default {
         })
       } catch (e) {
         this.saveState = SaveStates.ERROR
+      }
+    },
+    async deleteBusiness () {
+      if (confirm('Are you sure you want to delete this business?')) {
+        await this.$apollo.mutate({
+          mutation: DELETE_BUSINESS,
+          context: CONTEXT_LOGGED_IN,
+          variables: {
+            business_id: this.business.id
+          },
+          update: async (cache, { data }) => {
+            const routeChange = await this.$router.push({ name: 'owner-home' })
+            console.log(routeChange)
+            /* Force re-fetching of businesses after deletion */
+            const component = routeChange.matched[0].instances.default
+            component.$apollo.queries.businesses.refetch()
+          }
+        })
       }
     },
     async geocode (address) {

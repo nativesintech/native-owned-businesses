@@ -143,9 +143,15 @@ mutation (
   $business_id: uuid!
   $business: businesses_set_input!
   $tags: [businesses_tags_insert_input!]!
+  $ignore_delete_tags: [bigint!]!
   $territories: [businesses_territories_insert_input!]!
 ) {
-  delete_businesses_tags(where:{business_id:{_eq:$business_id}}) {
+  delete_businesses_tags( where: {
+    _and: [
+      {business_id: {_eq:$business_id}},
+      {_not: { tag_id: { _in: $ignore_delete_tags } }}
+    ]
+  }) {
     affected_rows,
     returning {
       business {
@@ -181,6 +187,14 @@ mutation (
     id name short_description long_description
     territories { territory { id, name, description_url }}
   }
+}`
+
+export const DELETE_BUSINESS = gql`
+mutation($business_id: uuid!) {
+  update_businesses_by_pk(
+    pk_columns: { id: $business_id }
+    _set: { deleted: true }
+  ) { id, name }
 }`
 
 /* Automaticaly sets owner id and business id on backend */
