@@ -75,5 +75,9 @@ html {
   }
 }
 
+.login-screen {
+  min-height: calc(100vh - 200px)
+}
+
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
