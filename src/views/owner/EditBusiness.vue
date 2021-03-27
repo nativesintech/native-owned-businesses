@@ -1,22 +1,25 @@
 <template>
   <main v-if="business">
     <section class="flex justify-between items-center mb-4 align-middle">
-      <h1 class="text-2xl">Add Business</h1>
+      <h1 class="text-2xl">Edit Business</h1>
       <router-link to="/owner" class="border border-gray-600 px-6 py-2 rounded inline-block mb-2">Go Back</router-link>
     </section>
     <div class="flex flex-col md:flex-row border border-gray-600 mb-6 shadow rounded">
       <div class="flex flex-col flex-1 p-6">
+        <!--
         <div
           class="text-center border border-dashed border-gray-600 h-64 p-6
           justify-center flex flex-col items-center cursor-pointer mb-4">
           <span class="text-6xl">&plus;</span>
           <span class="text-lg">Upload an Image</span>
         </div>
+        -->
         <LabeledInput
           label="Upload an image using a URL:"
-          name="image_url"
+          name="image_assets"
           required
           type="text"
+          v-model="image_assets_edit"
           placeholder="https://..."
         />
       </div>
@@ -105,12 +108,12 @@
         />
       </div>
     </div>
-    <div class="flex flex-row justify-end items-center md:flex-row">
+    <div style="min-height: 45px;" class="flex flex-row justify-end items-center md:flex-row">
       <transition name="fade-in-down" mode="out-in" appear>
         <div class="flex flex-col justify-center text-gray-500 mr-4">
-          <span v-if="saveState == SaveStates.SAVING">Saving...</span>
-          <span v-else-if="saveState == SaveStates.ERROR" class="text-red-500">Error saving business.</span>
-          <span v-else-if="saveState == SaveStates.SUCCESS">Business saved.</span>
+          <span style="min-width: 142px;" class="bg-gray-100 text-gray-500 p-2 border-2 border-gray-100 rounded" v-if="saveState == SaveStates.SAVING">Saving...</span>
+          <span style="min-width: 142px;" v-else-if="saveState == SaveStates.ERROR" class="bg-red-100 text-red-500 p-2 border-2 border-red-100 rounded">Error saving business.</span>
+          <span style="min-width: 142px;" class="bg-green-100 text-green-500 p-2 border-2 border-green-100 rounded" v-else-if="saveState == SaveStates.SUCCESS">Business saved.</span>
         </div>
       </transition>
       <button
@@ -192,6 +195,14 @@ export default {
           territory_id: territory.id,
           territory: territory
         }))
+      }
+    },
+    image_assets_edit: {
+      get () {
+        return this.business.image_assets.length > 0 ? this.business.image_assets[0].src : undefined
+      },
+      set (src) {
+        this.business.image_assets = [{ src }]
       }
     }
   },
