@@ -9,10 +9,10 @@
       <form @submit="handle_submit" class="mb-4 space-y-4" v-if="!is_logged_in">
         <label for="address" class="text-sm text-gray-600 leading-normal mb-2">Email</label><br />
         <input required id="email" v-model="email" name="address" class="border border-gray-600 rounded text-lg p-2 mb-4 min-w-full" type="email" /><br/>
-        <button class="bg-black text-white px-6 py-2 rounded min-w-full" type="submit">Login</button>
+        <button :disabled="loginState === SaveStates.SAVING" :class="loginState !== SaveStates.SAVING ? 'bg-black text-white px-6 py-2 rounded min-w-full' : 'bg-black opacity-50 text-white px-6 py-2 rounded min-w-full'" type="submit">Login</button>
         <div style="minHeight: 56px;">
-          <div class="bg-green-100 text-green-500 p-4 text-center" v-if="response && response.status === 200">Success! Login information was sent to your email.</div>
-          <div class="bg-red-100 text-red-500 p-4 text-center" v-if="response && response.status !== 200">Sorry! {{ response.data.message}} </div>
+          <div class="bg-green-100 text-green-500 p-4 text-center" v-if="loginState === SaveStates.SUCCESS">Success! Login information was sent to your email.</div>
+          <div class="bg-red-100 text-red-500 p-4 text-center" v-if="loginState === SaveStates.ERROR">Sorry! {{ response.data.message}} </div>
         </div>
       </form>
       <section class="text-gray-600 space-y-2 text-center" v-if="is_logged_in">
@@ -25,14 +25,16 @@
 </template>
 <script>
 import { parseToken } from '../../helpers'
-import { AUTH_URL } from '../../constants'
+import { AUTH_URL, SaveStates } from '../../constants'
 import axios from 'axios'
 
 export default {
   data () {
     return {
       email: undefined,
-      response: undefined
+      response: undefined,
+      loginState: undefined,
+      SaveStates
     }
   },
   methods: {
@@ -40,14 +42,18 @@ export default {
       e.preventDefault()
       const data = Object.fromEntries(new FormData(e.target).entries())
 
+      this.loginState = SaveStates.SAVING
+
       await axios({
         url: `${AUTH_URL}/auth/email`,
         method: 'POST',
         data
       }).then(response => {
         this.$data.response = response
+        this.loginState = SaveStates.SUCCESS
       }).catch((e) => {
         this.$data.response = e.response
+        this.loginState = SaveStates.ERROR
       })
     },
     logout (e) {
