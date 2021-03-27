@@ -23,7 +23,6 @@
           text-gray-800">
           <div class="flex justify-between w-100 flex-grow">
             <div v-if="territory" class="affiliation">{{territory.name}}</div>
-            <div v-if="owner"><router-link :to="{ name: 'business-edit', params: { id: business.id } }">Edit</router-link></div>
           </div>
           <div class="location">
             <a :href="location_link" v-if="business.location">
@@ -33,23 +32,31 @@
         </div>
         <div class="text-xl font-bold mb-1 pb-1 border-b">{{business.name}}</div>
       </header>
-      <div class="text-sm">
-        <div v-if="expanded">{{business.long_description}}</div>
+      <div class="text-sm flex-grow">
+        <div v-if="expanded">{{business.long_description || business.short_description}}</div>
         <div v-else>{{business.short_description}}</div>
       </div>
-      <div style="flex: 1">
+      <div class="flex flex-row items-end">
+        <div class="text-sm flex flex-row align-baseline flex-grow">
+          <span
+            v-for="tag in tags"
+            :key="tag.id"
+            class="box-border whitespace-no-wrap text-gray-500 pr-2 flex-end"
+            :class="`tag-${tag.name}`"
+          >{{tag.name}}</span>
+        </div>
+        <router-link
+          v-if="owner"
+          :to="{ name: 'business-edit', params: { id: business.id } }"
+          class="flex-end button-knockout px-6 py-2 rounded inline-block mr-4"
+        >Edit</router-link>
         <a
           v-if="business.external_url"
-          class="link-style"
           :href="business.external_url"
-        >link</a>
-      </div>
-      <div class="text-sm flex flex-row">
-        <span
-          v-for="tag in tags"
-          :key="tag.id"
-          class="box-border whitespace-no-wrap text-gray-500 pr-2"
-        >{{tag.name}}</span>
+          :title="business.external_url"
+          target="_blank"
+          class="flex-end button-knockout px-6 py-2 rounded inline-block"
+        >Website</a>
       </div>
     </div>
   </div>

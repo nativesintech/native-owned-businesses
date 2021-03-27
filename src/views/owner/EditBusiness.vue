@@ -259,7 +259,6 @@ export default {
           },
           update: async (cache, { data }) => {
             const routeChange = await this.$router.push({ name: 'owner-home' })
-            console.log(routeChange)
             /* Force re-fetching of businesses after deletion */
             const component = routeChange.matched[0].instances.default
             component.$apollo.queries.businesses.refetch()

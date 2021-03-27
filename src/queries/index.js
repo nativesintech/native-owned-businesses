@@ -60,10 +60,10 @@ export const GET_BUSINESS_BY_ID = query({
   }
 })
 
-export const getBusinessQuery = (q, affiliations, tags) => {
+export const getBusinessQuery = (searchQuery, affiliations, tags) => {
   const filters = {}
   const args = {}
-  const textSearch = q && q.trim().length > 0
+  const textSearch = searchQuery && searchQuery.trim().length > 0
 
   if (affiliations.length > 0) {
     filters.territories = { territory: { id: {
@@ -75,7 +75,7 @@ export const getBusinessQuery = (q, affiliations, tags) => {
     filters.tags = { tag_id: { _in: '$tags' } }
   }
 
-  if (q) {
+  if (searchQuery) {
     args.args = { search: '$query' }
   }
 
