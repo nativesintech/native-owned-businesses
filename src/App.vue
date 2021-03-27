@@ -2,11 +2,13 @@
   <div id="app" class="max-w-screen-sm lg:max-w-screen-lg mx-auto px-4 antialiased">
     <Header />
     <router-view/>
+    <Footer />
   </div>
 </template>
 
 <script>
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 import { parseToken } from './helpers'
 
 export default {
@@ -16,6 +18,6 @@ export default {
       this.$store.commit('handle_user', parseToken(token))
     }
   },
-  components: { Header }
+  components: { Header, Footer }
 }
 </script>
