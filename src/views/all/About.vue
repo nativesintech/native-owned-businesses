@@ -1,6 +1,6 @@
 <template>
-  <div class="pb-8">
-    <main class="space-y-4 max-w-2xl mx-auto">
+  <main>
+    <div class="space-y-4 max-w-2xl mx-auto">
       <section class="space-y-2">
         <h1 class="text-2xl font-bold">About</h1>
         <p class="text-base text-gray-600 leading-normal mb-6">
@@ -29,6 +29,6 @@
           <span class="font-bold">Loading icon:</span> Turtle by <a class="underline" target="_blank" rel="noopener noreferrer" href="https://thenounproject.com/search/?creator=64420&q=turtle&i=1097454">Ben Davis</a> from <a class="https://thenounproject.com">The Noun Project</a>. Creative Commons.
         </p>
       </section>
-    </main>
-  </div>
+    </div>
+  </main>
 </template>

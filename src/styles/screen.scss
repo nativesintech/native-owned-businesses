@@ -4,6 +4,20 @@ html {
   @apply font-body;
 }
 
+html, body {
+  height: 100%;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+main {
+  flex-grow: 1
+}
+
 .button-knockout {
   @apply border px-4 h-full bg-white border-gray-900 transition-colors
   duration-300;

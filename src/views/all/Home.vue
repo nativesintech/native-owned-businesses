@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <main>
+  <main>
+    <div>
       <div
         ref="hidebar"
         :style="search_offset"
@@ -109,8 +109,8 @@
             <h2>No Results Found</h2>
           </div>
         </transition>
-      </main>
-    </div>
+      </div>
+    </main>
 </template>
 
 <script>
