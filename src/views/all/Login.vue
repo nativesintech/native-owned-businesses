@@ -2,7 +2,7 @@
   <main class="flex items-center justify-center login-screen">
     <div class="flex-grow max-w-md space-y-4">
       <h1 class="text-2xl mb-4 font-bold text-center" v-if="!is_logged_in">Login with Email</h1>
-      <section v-if="!is_logged_in">
+      <section class="space-y-4" v-if="!is_logged_in">
         <p class="text-gray-600">If you have been added to the directory, then a link will be sent to your email to login.</p>
         <p class="text-gray-600"> If you have not been added to the directory, please send an email to <a class="underline" href="mailto:nob@nativesintech.org">nob@nativesintech.org</a> with your email, business, and nation so that we can add you.</p>
       </section>
