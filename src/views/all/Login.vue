@@ -15,7 +15,7 @@
           <div class="bg-red-100 text-red-500 p-4 text-center" v-if="response && response.status !== 200">Sorry! {{ response.data.message}} </div>
         </div>
       </form>
-      <section class="text-gray-600 space-y-4 text-center" v-if="is_logged_in">
+      <section class="text-gray-600 space-y-2 text-center" v-if="is_logged_in">
         <p>You are logged in!</p>
         <p>Click on the logout button below to logout.</p>
       </section>
