@@ -22,7 +22,7 @@ export const transaction = (...mutations) => {
 
 const BUSINESS_FIELDS = [
   'id', 'name', 'short_description', 'long_description', 'external_url',
-  'physical_address', 'location',
+  'physical_address', 'location', 'published',
   {
     territories: { fields: ['business_id', 'territory_id', {
       territory: {

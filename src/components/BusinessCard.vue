@@ -30,7 +30,9 @@
             </a>
           </div>
         </div>
-        <div class="text-xl font-bold mb-1 pb-1 border-b">{{business.name}}</div>
+        <div class="text-xl font-bold mb-1 pb-1 border-b">
+          {{business.name}}
+        </div>
       </header>
       <div class="text-sm flex-grow">
         <div v-if="expanded">{{business.long_description || business.short_description}}</div>
