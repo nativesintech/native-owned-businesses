@@ -108,7 +108,10 @@
         />
       </div>
     </div>
-    <div style="min-height: 45px;" class="flex flex-row justify-end items-center md:flex-row">
+    <div
+      style="min-height: 45px;"
+      class="flex flex-row justify-end items-center pb-6 md:flex-row"
+    >
       <transition name="fade-in-down" mode="out-in" appear>
         <div class="flex flex-col justify-center text-gray-500 mr-4">
           <span style="min-width: 142px;" class="bg-gray-100 text-gray-500 p-2 border-2 border-gray-100 rounded" v-if="saveState == SaveStates.SAVING">Saving...</span>
@@ -129,7 +132,7 @@
         @click="deleteBusiness"
       >Delete</button>
     </div>
-    <h1 class="text-2xl">Business Preview <span class="font-normal text-gray-400" v-if="!business.published">(draft)</span></h1>
+    <h1 class="text-2xl mb-2 pt-6 border-t">Business Preview <span class="font-normal text-gray-400" v-if="!business.published">(draft)</span></h1>
     <div class="font-normal text-gray-600 flex-grow mb-4 max-w-lg" v-if="!business.published">
       This business is currently an un-published draft.
       It will become visible to the public once you publish it.
