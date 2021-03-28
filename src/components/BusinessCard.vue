@@ -43,8 +43,7 @@
           <span
             v-for="tag in tags"
             :key="tag.id"
-            class="box-border whitespace-no-wrap text-gray-500 pr-2 flex-end"
-            :class="`tag-${tag.name}`"
+            :class="`box-border whitespace-no-wrap text-gray-500 pr-2 flex-end tag-${tag.name}`"
           >{{tag.name}}</span>
         </div>
         <router-link

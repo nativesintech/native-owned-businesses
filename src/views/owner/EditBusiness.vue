@@ -132,7 +132,7 @@
         @click="deleteBusiness"
       >Delete</button>
     </div>
-    <h1 class="text-2xl mb-2 pt-6 border-t">Business Preview <span class="font-normal text-gray-400" v-if="!business.published">(draft)</span></h1>
+    <h1 class="text-2xl mb-2 pt-2 border-t">Business Preview <span class="font-normal text-gray-400" v-if="!business.published">(draft)</span></h1>
     <div class="font-normal text-gray-600 flex-grow mb-4 max-w-lg" v-if="!business.published">
       This business is currently an un-published draft.
       It will become visible to the public once you publish it.
