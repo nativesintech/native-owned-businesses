@@ -183,9 +183,9 @@ export default {
         return getBusinessQuery(this.search_query, this.search_affiliations, this.search_tags)
       },
       variables () {
-        const query = this.search_query
-        const affiliations = this.search_affiliations.length > 0 ? this.search_affiliations.map(a => a.id) : null
-        const tags = this.search_tags.length > 0 ? this.search_tags.map(t => t.id) : null
+        const query = this.search_query || undefined
+        const affiliations = this.search_affiliations.length > 0 ? this.search_affiliations.map(a => a.id) : undefined
+        const tags = this.search_tags.length > 0 ? this.search_tags.map(t => t.id) : undefined
 
         return this.minimum_search_criteria ? { query, affiliations, tags } : {}
       }

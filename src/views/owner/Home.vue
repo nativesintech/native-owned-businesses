@@ -47,8 +47,9 @@ export default {
           }
         })
       } catch (e) {
-        console.error(e)
         // TODO(nsahler): Show error toast.
+        // eslint-disable-next-line no-console
+        console.error(e)
       }
     }
   }

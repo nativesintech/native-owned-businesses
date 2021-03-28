@@ -108,7 +108,10 @@
         />
       </div>
     </div>
-    <div style="min-height: 45px;" class="flex flex-row justify-end items-center md:flex-row">
+    <div
+      style="min-height: 45px;"
+      class="flex flex-row justify-end items-center pb-6 md:flex-row"
+    >
       <transition name="fade-in-down" mode="out-in" appear>
         <div class="flex flex-col justify-center text-gray-500 mr-4">
           <span style="min-width: 142px;" class="bg-gray-100 text-gray-500 p-2 border-2 border-gray-100 rounded" v-if="saveState == SaveStates.SAVING">Saving...</span>
@@ -121,11 +124,19 @@
         @click="saveBusiness"
       >Save</button>
       <button
+        class="text-gray-500 px-6 py-2 mr-4 border border-gray-500 hover:bg-gray-500 hover:text-white transition-colors duration-150 rounded"
+        @click="togglePublish"
+      >{{ business.published ? 'Unpublish' : 'Publish' }}</button>
+      <button
         class="text-red-500 text-white py-2 underline hover:no-underline rounded"
         @click="deleteBusiness"
       >Delete</button>
     </div>
-    <h1 class="text-2xl">Business Preview</h1>
+    <h1 class="text-2xl mb-2 pt-2 border-t">Business Preview <span class="font-normal text-gray-400" v-if="!business.published">(draft)</span></h1>
+    <div class="font-normal text-gray-600 flex-grow mb-4 max-w-lg" v-if="!business.published">
+      This business is currently an un-published draft.
+      It will become visible to the public once you publish it.
+    </div>
     <BusinessCard :business="business" />
   </main>
 </template>
@@ -219,8 +230,8 @@ export default {
     },
     async saveBusiness () {
       /* eslint-disable camelcase */
-      let { id, name, short_description, long_description, external_url, location, physical_address, tags, territories } = this.business
-      let business = { name, short_description, long_description, external_url, location, physical_address }
+      let { id, name, short_description, long_description, external_url, location, physical_address, tags, territories, published } = this.business
+      let business = { name, short_description, long_description, external_url, location, physical_address, published }
 
       tags = tags.filter(filterSpecialTags).map(({ tag_id, business_id }) => ({ tag_id, business_id }))
       territories = territories.map(({ territory_id, business_id }) => ({ territory_id, business_id }))
@@ -249,7 +260,20 @@ export default {
         this.saveState = SaveStates.ERROR
       }
     },
+    async togglePublish () {
+      /* TODO(nsahler): i18n */
+      const message = (this.business.published
+        ? 'Are you sure you want to publish this business? This will hide the business from the public.'
+        : 'Are you sure you want to publish this business? This will make the business visible to everyone.'
+      )
+
+      if (confirm(message)) {
+        this.business.published = !this.business.published
+        await this.saveBusiness()
+      }
+    },
     async deleteBusiness () {
+      /* TODO(nsahler): i18n */
       if (confirm('Are you sure you want to delete this business?')) {
         await this.$apollo.mutate({
           mutation: DELETE_BUSINESS,
@@ -259,7 +283,6 @@ export default {
           },
           update: async (cache, { data }) => {
             const routeChange = await this.$router.push({ name: 'owner-home' })
-            console.log(routeChange)
             /* Force re-fetching of businesses after deletion */
             const component = routeChange.matched[0].instances.default
             component.$apollo.queries.businesses.refetch()

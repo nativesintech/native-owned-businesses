@@ -22,7 +22,7 @@ main {
   @apply border px-4 h-full bg-white border-gray-900 transition-colors
   duration-300;
 
-  &.selected {
+  &.selected, &:hover {
     @apply bg-gray-900;
     color: #FFF;
   }
@@ -91,6 +91,11 @@ main {
 
 .login-screen {
   min-height: calc(100vh - 200px)
+}
+
+/* Tag repetition increases specificity over tailwind's classes */
+.tag-featured.tag-featured {
+  @apply text-red-500;
 }
 
 @import "tailwindcss/components";

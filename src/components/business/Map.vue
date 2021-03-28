@@ -33,7 +33,6 @@ export default {
   components: { MglMap, MglMarker },
   methods: {
     updateCoordinates (e) {
-      console.log(e)
     },
     onMapLoaded (event) {
       this.map = event.map
