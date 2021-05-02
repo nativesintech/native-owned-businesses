@@ -1,5 +1,17 @@
 # Native Owned Businesses
 
+A directory of native-owned businesses.
+
+Currently live at https://businesses.bynatives.app
+
+Also accessible via:
+https://b.bynatives.app
+
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/37e3b30d-ef2d-4df5-96a8-bfe031a85557/deploy-status)](https://app.netlify.com/sites/affectionate-meninsky-652e21/deploys)
+
+---
+
 ## Running Locally
 
 ### Configuration
