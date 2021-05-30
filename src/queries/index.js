@@ -22,6 +22,7 @@ export const transaction = (...mutations) => {
 
 const BUSINESS_FIELDS = [
   'id', 'name', 'short_description', 'long_description', 'external_url',
+  'preview_image',
   'physical_address', 'location', 'published',
   {
     territories: { fields: ['business_id', 'territory_id', {
@@ -29,10 +30,6 @@ const BUSINESS_FIELDS = [
         fields: ['id', 'name', 'description_url']
       }
     }] }
-  }, {
-    image_assets: {
-      fields: ['src', 'width', 'height', 'alt']
-    }
   }, {
     tags: {
       fields: ['business_id', 'tag_id', {
@@ -184,7 +181,7 @@ mutation (
   update_businesses_by_pk(
     pk_columns: {id: $business_id }
     _set: $business) {
-    id name short_description long_description
+    id name short_description long_description, preview_image
     territories { territory { id, name, description_url }}
   }
 }`
