@@ -5,23 +5,31 @@
       <router-link to="/owner" class="border border-gray-600 px-6 py-2 rounded inline-block mb-2">Go Back</router-link>
     </section>
     <div class="flex flex-col md:flex-row border border-gray-600 mb-6 shadow rounded">
-      <div class="flex flex-col flex-1 p-6">
-        <!--
+      <div class="h-64 flex flex-col flex-1 p-6">
+        <input
+          class="hidden"
+          type="file" accept="image/*"
+          @change="uploadImage($event)"
+          ref="imageInput"
+        />
+        <img
+          v-if="business.preview_image"
+          :alt="business.name"
+          :src="previewImage(business.preview_image)"
+          class="w-full h-64 max-w-full object-cover self-center border border-gray-600"
+        />
         <div
+          v-else
           class="text-center border border-dashed border-gray-600 h-64 p-6
-          justify-center flex flex-col items-center cursor-pointer mb-4">
+          justify-center flex flex-col items-center cursor-pointer mb-4"
+          @click="selectImage">
           <span class="text-6xl">&plus;</span>
           <span class="text-lg">Upload an Image</span>
         </div>
-        -->
-        <LabeledInput
-          label="Upload an image using a URL:"
-          name="image_assets"
-          required
-          type="text"
-          v-model="image_assets_edit"
-          placeholder="https://..."
-        />
+        <div
+          class="pt-2 text-blue-500 cursor-pointer underline"
+          @click="selectImage"
+        >Replace Image</div>
       </div>
       <div class="flex-1 p-6 border-l border-gray-600 flex flex-col">
         <LabeledInput
@@ -146,8 +154,8 @@ import LabeledInput from '@/components/ui/LabeledInput'
 import LabeledField from '@/components/ui/LabeledField'
 import Map from '@/components/business/Map'
 
-import { googleToGeoJSON, filterSpecialTags, SPECIAL_TAG_IDS } from '@/helpers'
-import { CONTEXT_LOGGED_IN, SaveStates } from '@/constants'
+import { googleToGeoJSON, filterSpecialTags, previewImage, SPECIAL_TAG_IDS } from '@/helpers'
+import { CONTEXT_LOGGED_IN, SaveStates, AUTH_URL } from '@/constants'
 
 import { mapState } from 'vuex'
 import axios from 'axios'
@@ -207,17 +215,10 @@ export default {
           territory: territory
         }))
       }
-    },
-    image_assets_edit: {
-      get () {
-        return this.business.image_assets.length > 0 ? this.business.image_assets[0].src : undefined
-      },
-      set (src) {
-        this.business.image_assets = [{ src }]
-      }
     }
   },
   methods: {
+    previewImage,
     writeBusinessToCache (cache, business) {
       cache.writeQuery({
         query: GET_BUSINESS_BY_ID,
@@ -230,8 +231,11 @@ export default {
     },
     async saveBusiness () {
       /* eslint-disable camelcase */
-      let { id, name, short_description, long_description, external_url, location, physical_address, tags, territories, published } = this.business
-      let business = { name, short_description, long_description, external_url, location, physical_address, published }
+      let { id, name, short_description, long_description, external_url,
+        location, physical_address, tags, territories, published, preview_image
+      } = this.business
+
+      let business = { name, short_description, long_description, external_url, location, physical_address, published, preview_image }
 
       tags = tags.filter(filterSpecialTags).map(({ tag_id, business_id }) => ({ tag_id, business_id }))
       territories = territories.map(({ territory_id, business_id }) => ({ territory_id, business_id }))
@@ -301,6 +305,30 @@ export default {
         this.geocodeResult = geocode
         this.business.location = googleToGeoJSON(geocode.geometry)
       }
+    },
+    selectImage () {
+      const $input = this.$refs.imageInput
+      $input.click()
+    },
+    async uploadImage (e) {
+      /* TODO(nsahler): Move token to store as-is */
+      const params = {
+        business: this.id,
+        token: localStorage.getItem('session')
+      }
+      const res = await axios.get(`${AUTH_URL}/upload/presignedUrl`, { params })
+      const { postURL, formData } = res.data
+
+      let form = new FormData()
+      for (let key in formData) {
+        form.append(key, formData[key])
+      }
+
+      form.append('file', e.target.files[0])
+      form.append('content-type', e.target.files[0].type)
+      const uploadResponse = await axios.post(postURL, form)
+      console.log(uploadResponse)
+      this.business.preview_image = formData.key
     }
   }
 }

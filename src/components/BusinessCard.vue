@@ -5,13 +5,13 @@
       class="overflow-hidden rounded-t border-b border-gray-600 flex-shrink
       flex flex-row md:border-0 md:rounded-none md:border-r"
     >
-      <!-- TODO(nsahler): Slider -->
+      <!-- TODO(nsahler): Slider for multiple images -->
       <img
-        v-if="business.image_assets.length > 0"
+        v-if="business.preview_image"
         :alt="business.name"
-        :src="business.image_assets[0].src"
+        :src="previewImage(business.preview_image)"
         class="w-full h-full max-w-full object-cover self-center"
-      >
+      />
       <div
         v-else
         class="bg-gray-600 w-full h-full"
@@ -64,6 +64,7 @@
 </template>
 <script>
 import { mapState } from 'vuex'
+import { previewImage } from '@/helpers'
 
 export default {
   props: ['business', 'expanded'],
@@ -87,6 +88,7 @@ export default {
     tags () {
       return this.business.tags.map(i => i.tag)
     }
-  }
+  },
+  methods: { previewImage }
 }
 </script>

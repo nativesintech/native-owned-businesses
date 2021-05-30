@@ -6,6 +6,8 @@ export const parseToken = (token) => {
   }
 }
 
+export const previewImage = (id) => 'https://storage.nativesintech.org/bynatives.app/' + encodeURIComponent(id)
+
 export const googleToGeoJSON = ({ location }) => ({ type: 'Point', coordinates: [location.lng, location.lat] })
 
 /* Change tags to a relation and filter out restricted tags */
