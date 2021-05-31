@@ -1,26 +1,43 @@
 <template>
-  <transition-group class="py-4 flex flex-col relative" name="fade-in-left" tag="div" mode="out-in" appear>
+  <transition-group
+    class="py-4 flex flex-col relative" name="fade-in-search" tag="div"
+    v-if="businesses.length && !loading"
+  >
     <BusinessCard
-      class="search-result"
-      v-for="(business, index) in businesses"
+      class="search-result z-10"
+      v-for="(business) in businesses"
       :business="business"
       :key="business.id"
-      :style="`transition-delay: ${index * 100}ms;`"
     />
   </transition-group>
+  <transition name="fade-in-search" v-else>
+    <div class="flex text-lg text-gray-700 flex-col justify-center text-center h-64 search-result" :key="none">
+      <h2  v-if="!loading" >No Results Found</h2>
+      <Loader v-else/>
+    </div>
+  </transition>
 </template>
 
 <script>
 import BusinessCard from '@/components/BusinessCard'
+import Loader from '@/components/Loader'
+
 export default {
-  props: ['businesses'],
-  components: { BusinessCard }
+  props: ['businesses', 'loading'],
+  components: { BusinessCard, Loader }
 }
 </script>
 
 <style lang="scss" scoped>
 .search-result {
-  &.fade-in-left-leave-active {
+  transition: transform 400ms ease, opacity 200ms ease;
+
+  &.fade-in-search-enter, &.fade-in-search-leave-to, &.list-complete-leave-active {
+    opacity: 0;
+    transform: translate3d(30px, 0, 0);
+  }
+
+  &.fade-in-search-leave-active {
     position: absolute;
     width: 100%;
   }

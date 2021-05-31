@@ -37,47 +37,51 @@
             </div>
           </div>
         </div>
-        <transition name="fade-in-down">
-          <div class="font-bold text-lg whitespace-normal inline-block" v-if="minimum_search_criteria">
-            <span v-if="search_query">
-              Results for&nbsp;<span class="text-gray-500">"{{search_query}}"</span>
-            </span>
-            <span key="all" v-else>Businesses&nbsp;</span>
-            <span v-if="minimum_search_criteria && search_location">
-              in <span class="text-gray-500">{{search_location}}</span>&nbsp;
-            </span>
-            <span v-if="search_tags">
-              {{search_tags.map( tag => tag.name ).join(', ')}}
-            </span>
-            <!-- TODO(nsahler): i18n friendly -->
-            <span v-if="minimum_search_criteria && search_affiliations.length > 0">
-              &nbsp;affiliated with the&nbsp;
-              <span
-                v-for="(nation, i) in search_affiliations"
-                :key="i"
-              >
-                <span class="text-gray-500">{{nation.name}}</span>
-                <span v-if="i + 1 < search_affiliations.length - 1">
-                  ,&nbsp;
-                </span>
-                <span v-if="i + 1 === search_affiliations.length - 1">
-                  &nbsp;or&nbsp;
+        <div class="font-bold text-lg whitespace-normal inline-block w-full h-5">
+          <transition name="fade-in-down">
+            <span v-if="minimum_search_criteria">
+              <span v-if="search_query">
+                Results for&nbsp;<span class="text-gray-500">"{{search_query}}"</span>
+              </span>
+              <span key="all" v-else-if="minimum_search_criteria">Businesses&nbsp;</span>
+              <span v-if="search_location">
+                in <span class="text-gray-500">{{search_location}}</span>&nbsp;
+              </span>
+              <span v-if="search_tags.length">
+                tagged with
+                <span
+                  class="text-gray-500"
+                  v-for="(tag, i) in search_tags"
+                  :key="tag.name"
+                >
+                  {{tag.name}}<span v-if="i < search_tags.length - 1">,</span>&nbsp;
                 </span>
               </span>
-              <span>&nbsp;nation</span>
-              <span v-if="search_affiliations.length > 1">s</span>...
+              <!-- TODO(nsahler): i18n friendly -->
+              <span v-if="minimum_search_criteria && search_affiliations.length > 0">
+                &nbsp;affiliated with the&nbsp;
+                <span
+                  v-for="(nation, i) in search_affiliations"
+                  :key="i"
+                >
+                  <span class="text-gray-500">{{nation.name}}</span>
+                  <span v-if="i + 1 < search_affiliations.length - 1">
+                    ,&nbsp;
+                  </span>
+                  <span v-if="i + 1 === search_affiliations.length - 1">
+                    &nbsp;or&nbsp;
+                  </span>
+                </span>
+                <span>&nbsp;nation</span>
+                <span v-if="search_affiliations.length > 1">s</span>...
+              </span>
             </span>
-         </div>
-        </transition>
-        <SearchResults class="z-10" v-if="show_search_results"  :businesses="searchResults"/>
-        <transition v-else-if="queryIsLoading" name="fade-in-left" mode="out-in" appear>
-          <Loader/>
-        </transition>
-        <transition v-else-if="minimum_search_criteria && searchResults" name="fade-in-left" mode="out-in" appear>
-          <div class="py-4 text-center text-lg text-gray-700">
-            <h2>No Results Found</h2>
-          </div>
-        </transition>
+            <span v-else>
+              Featured Businesses
+            </span>
+          </transition>
+        </div>
+        <SearchResults :businesses="searchResults" :loading="queryIsLoading"/>
       </div>
     </main>
 </template>
@@ -87,7 +91,6 @@ import 'vue-select/dist/vue-select.css'
 import SearchResults from '@/components/SearchResults'
 import LabeledField from '@/components/ui/LabeledField'
 import LabeledInput from '@/components/ui/LabeledInput'
-import Loader from '@/components/Loader'
 
 import {
   GET_ALL_TAGS,
@@ -109,8 +112,7 @@ export default {
   components: {
     SearchResults,
     LabeledField,
-    LabeledInput,
-    Loader
+    LabeledInput
   },
   methods: {
     toggleSearch () {
@@ -135,15 +137,19 @@ export default {
   },
   apollo: {
     businesses: {
+      throttle: 200,
+      debounce: 200,
       query () {
         return getBusinessQuery(this.search_query, this.search_affiliations, this.search_tags)
       },
       variables () {
-        const query = this.search_query || undefined
+        let query = this.search_query || undefined
         const affiliations = this.search_affiliations.length > 0 ? this.search_affiliations.map(a => a.id) : undefined
         const tags = this.search_tags.length > 0 ? this.search_tags.map(t => t.id) : undefined
 
-        return this.minimum_search_criteria ? { query, affiliations, tags } : {}
+        if (query) query = query.trim().replace(/\s/g, '|')
+
+        return { query, affiliations, tags }
       }
     },
     featured_businesses: GET_FEATURED_BUSINESSES,
