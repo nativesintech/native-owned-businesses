@@ -326,7 +326,7 @@ export default {
 
       form.append('file', e.target.files[0])
       form.append('content-type', e.target.files[0].type)
-      const uploadResponse = await axios.post(postURL, form)
+      await axios.post(postURL, form)
       this.business.preview_image = formData.key
     }
   }
