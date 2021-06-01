@@ -81,7 +81,7 @@
             </span>
           </transition>
         </div>
-        <SearchResults :businesses="searchResults" :loading="queryIsLoading"/>
+        <SearchResults :businesses="search_results" :loading="query_is_loading"/>
       </div>
     </main>
 </template>
@@ -123,16 +123,16 @@ export default {
     minimum_search_criteria () {
       return this.search_query || (this.search_affiliations.length > 0) || (this.search_tags.length > 0)
     },
-    show_search_results () {
-      return this.searchResults && this.searchResults.length
-    },
-    searchResults () {
+    search_results () {
       return this.minimum_search_criteria ? this.businesses : this.featured_businesses
     },
-    queryIsLoading () {
+    query_is_loading () {
       const queries = this.$apollo.queries
       const query = this.minimum_search_criteria ? queries.businesses : queries.featured_businesses
       return query.loading
+    },
+    tag_ids () {
+      return this.search_tags.map(t => t.id)
     }
   },
   apollo: {
@@ -143,11 +143,9 @@ export default {
         return getBusinessQuery(this.search_query, this.search_affiliations, this.search_tags)
       },
       variables () {
-        let query = this.search_query || undefined
+        const query = this.search_query.trim().replace(/\s/g, '|') || undefined
         const affiliations = this.search_affiliations.length > 0 ? this.search_affiliations.map(a => a.id) : undefined
-        const tags = this.search_tags.length > 0 ? this.search_tags.map(t => t.id) : undefined
-
-        if (query) query = query.trim().replace(/\s/g, '|')
+        let tags = this.search_tags.length > 0 ? this.tag_ids : ((!query && !affiliations) ? [4] : undefined)
 
         return { query, affiliations, tags }
       }

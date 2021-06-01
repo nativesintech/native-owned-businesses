@@ -1,7 +1,6 @@
 <template>
   <transition-group
     class="py-4 flex flex-col relative" name="fade-in-search" tag="div"
-    v-if="businesses.length && !loading"
   >
     <BusinessCard
       class="search-result z-10"
@@ -9,13 +8,17 @@
       :business="business"
       :key="business.id"
     />
+    <div
+      class="empty-state-wrapper search-result"
+      key="none"
+      v-if="!businesses.length && !loading"
+    ><h2>No Results Found</h2></div>
+    <div
+      class="empty-state-wrapper search-result"
+      key="loader"
+      v-else-if="loading"
+    ><Loader/></div>
   </transition-group>
-  <transition name="fade-in-search" v-else>
-    <div class="flex text-lg text-gray-700 flex-col justify-center text-center h-64 search-result" :key="none">
-      <h2  v-if="!loading" >No Results Found</h2>
-      <Loader v-else/>
-    </div>
-  </transition>
 </template>
 
 <script>
@@ -41,5 +44,9 @@ export default {
     position: absolute;
     width: 100%;
   }
+}
+
+.empty-state-wrapper {
+  @apply flex text-lg text-gray-700 flex-col justify-center text-center h-64;
 }
 </style>
