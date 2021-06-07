@@ -59,13 +59,13 @@ main {
   box-shadow: none !important;
   margin-top: -1px;
   margin-left: -1px;
-  width: 100%;
+  width: calc(100% + 2px) !important;
 
   @apply border-gray-600;
 }
 
 .vs--searchable {
-  @apply border border-gray-600 rounded text-lg p-2 box-border mb-4 mr-4;
+  @apply border border-gray-600 rounded text-lg p-1 box-border mb-4 mr-4;
 }
 
 .v-select {
@@ -87,10 +87,6 @@ main {
       color: #a0aec0;
     }
   }
-}
-
-.login-screen {
-  min-height: calc(100vh - 200px)
 }
 
 /* Tag repetition increases specificity over tailwind's classes */

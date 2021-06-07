@@ -31,7 +31,7 @@
           @click="selectImage"
         >Replace Image</div>
       </div>
-      <div class="flex-1 p-6 border-l border-gray-600 flex flex-col">
+      <div class="flex-1 p-6 lg:border-l border-gray-600 flex flex-col">
         <LabeledInput
           label="Business Name"
           name="name"
@@ -118,7 +118,7 @@
     </div>
     <div
       style="min-height: 45px;"
-      class="flex flex-row justify-end items-center pb-6 md:flex-row"
+      class="flex flex-row justify-end items-center pb-6 lg:flex-row"
     >
       <transition name="fade-in-down" mode="out-in" appear>
         <div class="flex flex-col justify-center text-gray-500 mr-4">

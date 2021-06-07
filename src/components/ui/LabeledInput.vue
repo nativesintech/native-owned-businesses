@@ -1,7 +1,7 @@
 <template>
   <LabeledField :name="name" :label="label">
     <component
-      class="border border-gray-600 rounded text-lg p-2 mb-4"
+      class="border border-gray-600 rounded outline-none focus:border-gray-300 text-lg p-2 mb-4"
       :is="textarea ? 'textarea': 'input'"
       :value.prop="value"
       @input="$emit('input', $event.target.value)"

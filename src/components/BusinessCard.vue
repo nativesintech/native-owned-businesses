@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col overflow-hidden md:flex-row border border-gray-600 mb-6 shadow rounded">
+  <div class="flex flex-col overflow-hidden lg:flex-row border border-gray-600 mb-6 shadow rounded">
     <div
-      :class="expanded ? 'md:w-1/2 h-128' : 'md:w-1/4 h-64'"
+      :class="expanded ? 'lg:w-1/2 h-128' : 'lg:w-1/4 h-64'"
       class="overflow-hidden rounded-t border-b border-gray-600 flex-shrink
-      flex flex-row md:border-0 md:rounded-none md:border-r"
+      flex flex-row lg:border-0 lg:rounded-none lg:border-r"
     >
       <!-- TODO(nsahler): Slider for multiple images -->
       <img
@@ -30,34 +30,36 @@
             </a>
           </div>
         </div>
-        <div class="text-xl font-bold mb-1 pb-1 border-b">
+        <router-link :to="linkTo" class="text-xl font-bold mb-1 pb-1 border-b block">
           {{business.name}}
-        </div>
+        </router-link>
       </header>
-      <div class="text-sm flex-grow">
+      <div class="text-sm flex-grow mb-6 lg:mb-0">
         <div v-if="expanded">{{business.long_description || business.short_description}}</div>
         <div v-else>{{business.short_description}}</div>
       </div>
-      <div class="flex flex-row items-end">
-        <div class="text-sm flex flex-row align-baseline flex-grow">
+      <div class="flex flex-col lg:flex-row lg:items-end">
+        <div class="text-sm flex flex-row align-baseline flex-grow mb-6 lg:mb-0">
           <span
             v-for="tag in tags"
             :key="tag.id"
             :class="`box-border whitespace-no-wrap text-gray-500 pr-2 flex-end tag-${tag.name}`"
           >{{tag.name}}</span>
         </div>
-        <router-link
-          v-if="owner"
-          :to="{ name: 'business-edit', params: { id: business.id } }"
-          class="flex-end button-knockout px-6 py-2 rounded inline-block mr-4"
-        >Edit</router-link>
-        <a
-          v-if="business.external_url"
-          :href="business.external_url"
-          :title="business.external_url"
-          target="_blank"
-          class="flex-end button-knockout px-6 py-2 rounded inline-block"
-        >Website</a>
+        <div class="text-sm flex flex-row align-baseline flex-end">
+          <router-link
+            v-if="owner"
+            :to="{ name: 'business-edit', params: { id: business.id } }"
+            class="button-knockout px-6 py-2 rounded inline-block mr-4"
+          >Edit</router-link>
+          <a
+            v-if="business.external_url"
+            :href="business.external_url"
+            :title="business.external_url"
+            target="_blank"
+            class="button-knockout px-6 py-2 rounded inline-block"
+          >Website</a>
+        </div>
       </div>
     </div>
   </div>
@@ -87,6 +89,9 @@ export default {
     },
     tags () {
       return this.business.tags.map(i => i.tag)
+    },
+    linkTo () {
+      return { name: 'business', params: { id: this.business.id } }
     }
   },
   methods: { previewImage }

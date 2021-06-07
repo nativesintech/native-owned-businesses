@@ -1,25 +1,49 @@
 <template>
-  <main class="flex items-center justify-center login-screen">
+  <main class="flex items-center justify-center">
     <div class="flex-grow max-w-md space-y-4">
-      <h1 class="text-2xl mb-4 font-bold text-center" v-if="!is_logged_in">Login with Email</h1>
-      <section class="space-y-4" v-if="!is_logged_in">
+      <h1 class="text-2xl mb-4 font-bold text-center" v-if="!isLoggedIn">Login with Email</h1>
+      <section class="space-y-4" v-if="!isLoggedIn">
         <p class="text-gray-600">If you have been added to the directory, then a link will be sent to your email to login.</p>
         <p class="text-gray-600"> If you have not been added to the directory, please send an email to <a class="underline" href="mailto:nob@nativesintech.org">nob@nativesintech.org</a> with your email, business, and nation so that we can add you.</p>
       </section>
-      <form @submit="handle_submit" class="mb-4 space-y-4" v-if="!is_logged_in">
-        <label for="address" class="text-sm text-gray-600 leading-normal mb-2">Email</label><br />
-        <input required id="email" v-model="email" name="address" class="border border-gray-600 rounded text-lg p-2 mb-4 min-w-full" type="email" /><br/>
-        <button :disabled="loginState === SaveStates.SAVING" :class="loginState !== SaveStates.SAVING ? 'bg-black text-white px-6 py-2 rounded min-w-full' : 'bg-black opacity-50 text-white px-6 py-2 rounded min-w-full'" type="submit">Login</button>
-        <div style="minHeight: 56px;">
-          <div class="bg-green-100 text-green-500 p-4 text-center" v-if="loginState === SaveStates.SUCCESS">Success! Login information was sent to your email.</div>
-          <div class="bg-red-100 text-red-500 p-4 text-center" v-if="loginState === SaveStates.ERROR">Sorry! {{ response.data.message}} </div>
-        </div>
+      <form @submit="handle_submit" class="mb-4 space-y-4" v-if="!isLoggedIn">
+        <transition name="fade-in-down">
+          <div v-if="loginState !== SaveStates.SUCCESS">
+            <label for="address" class="text-sm text-gray-600 leading-normal mb-2">Email</label><br />
+            <input
+              required
+              id="email"
+              name="address"
+              class="border border-gray-600 rounded text-lg p-2 mb-4 min-w-full"
+              type="email"
+              v-model="email"
+              :disabled="loginState == SaveStates.SAVING"
+            /><br/>
+            <button
+              type="submit"
+              class="bg-black text-white px-6 py-2 rounded min-w-full hover:bg-gray-900 transition-colors duration-200"
+              :class="{ 'opacity-50': loginState == SaveStates.SAVING }"
+              :disabled="loginState === SaveStates.SAVING"
+            >Login</button>
+          </div>
+        </transition>
+        <transition name="fade-in-down">
+          <div
+            v-if="feedbackMessage"
+            class="p-4 text-center transition-colors duration-200"
+            :class="{
+              'bg-blue-100 text-blue-500': loginState === SaveStates.SAVING,
+              'bg-green-100 text-green-500': loginState === SaveStates.SUCCESS,
+              'bg-red-100 text-red-500': loginState === SaveStates.ERROR
+            }"
+          >{{ feedbackMessage }}</div>
+        </transition>
       </form>
-      <section class="text-gray-600 space-y-2 text-center" v-if="is_logged_in">
+      <section class="text-gray-600 space-y-2 text-center" v-if="isLoggedIn">
         <p>You are logged in!</p>
         <p>Click on the logout button below to logout.</p>
       </section>
-      <button v-on:click="logout" class="bg-black text-white px-6 py-2 rounded min-w-full" v-if="is_logged_in">Logout</button>
+      <button v-on:click="logout" class="bg-black text-white px-6 py-2 rounded min-w-full" v-if="isLoggedIn">Logout</button>
     </div>
   </main>
 </template>
@@ -70,8 +94,15 @@ export default {
     }
   },
   computed: {
-    is_logged_in () {
+    isLoggedIn () {
       return Boolean(this.$store.state.user)
+    },
+    feedbackMessage () {
+      const state = this.loginState
+      if (state === SaveStates.SAVING) return 'Loading...'
+      if (state === SaveStates.SUCCESS) return 'Success! Login information was sent to your email.'
+      if (state === SaveStates.ERROR) return `Sorry! ${this.response.data.message}`
+      return null
     }
   }
 
